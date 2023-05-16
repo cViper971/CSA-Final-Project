@@ -45,13 +45,17 @@ public class GamePanel extends JPanel{
 		public void keyPressed(KeyEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_LEFT)
-				currT.setX(currT.getX()-1);
+				if(canMove(currT.x-1,currT.y))
+					currT.setX(currT.getX()-1);
 			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
-				currT.setX(currT.getX()+1);
+				if(canMove(currT.x-1,currT.y))
+					currT.setX(currT.getX()+1);
 			if(e.getKeyCode()==KeyEvent.VK_UP)
 				currT.rotateLeft();
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				boxY+=5;
+				currT.rotateRight();
+			if(e.getKeyCode()==KeyEvent.VK_SPACE)
+				drop();
 			repaint();
 		}
 		@Override
@@ -71,12 +75,36 @@ public class GamePanel extends JPanel{
 		}
 		return false;
 	}
+	
+	public boolean canMove(int x, int y) {
+		for(int i=0;i<4;i++) {
+			if(x+currT.shape[i][0]>Constants.gridWidth-1||x+currT.shape[i][0]<0)
+				return false;
+			if(board[currT.shape[i][0]+x][currT.shape[i][0]+y].isOccupied()==true)
+				return false;
+		}
+		return true;
+	}
 
 	public void drawCurrent(Graphics g) {
 		for(int[] coord:currT.shape) {
 			g.setColor(currT.color);
 			g.fillRect(Constants.blockSize*(currT.x+coord[0]), Constants.blockSize*(currT.y+coord[1]), Constants.blockSize, Constants.blockSize);
 		}
+	}
+	
+	public void drop() {
+		while(!isLanded())
+			currT.setY(currT.getY()+1);
+		updateGrid();
+	}
+	
+	public void updateGrid() {
+		for(int i = 0;i<4;i++) {
+			System.out.println("x: "+currX(i)+" y: "+currY(i));
+			setCell(currX(i),currY(i),currT.color,true);
+		}
+		currT = new Tetrimino(Constants.gridWidth/2,1);
 	}
 	
 	public int currX(int i) {
@@ -117,12 +145,7 @@ public class GamePanel extends JPanel{
 			// TODO Auto-generated method stub
 			currT.setY(currT.getY()+1);
 			if(isLanded()) {
-				System.out.println("landed");
-				for(int i = 0;i<4;i++) {
-					System.out.println("x: "+currX(i)+" y: "+currY(i));
-					setCell(currX(i),currY(i),currT.color,true);
-				}
-				currT = new Tetrimino(Constants.gridWidth/2,1);
+				updateGrid();
 			}
 			repaint();
 		}

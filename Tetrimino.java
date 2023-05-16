@@ -40,6 +40,14 @@ public class Tetrimino {
 	        }
 	}
 	
+	public void rotateRight() {
+		 for (int i = 0; i < 4; ++i) {
+			 	int[] temp = shape[i].clone();
+	            shape[i][0] = -temp[1];
+	            shape[i][1] = temp[0]+1;
+	        }
+	}
+	
 	public int[][] getShape() {
 		return shape;
 	}
