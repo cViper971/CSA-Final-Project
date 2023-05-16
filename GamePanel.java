@@ -48,7 +48,7 @@ public class GamePanel extends JPanel{
 				if(canMove(currT.x-1,currT.y))
 					currT.setX(currT.getX()-1);
 			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
-				if(canMove(currT.x-1,currT.y))
+				if(canMove(currT.x+1,currT.y))
 					currT.setX(currT.getX()+1);
 			if(e.getKeyCode()==KeyEvent.VK_UP)
 				currT.rotateLeft();
@@ -80,7 +80,7 @@ public class GamePanel extends JPanel{
 		for(int i=0;i<4;i++) {
 			if(x+currT.shape[i][0]>Constants.gridWidth-1||x+currT.shape[i][0]<0)
 				return false;
-			if(board[currT.shape[i][0]+x][currT.shape[i][0]+y].isOccupied()==true)
+			if(board[currT.shape[i][1]+y][currT.shape[i][0]+x].isOccupied()==true)
 				return false;
 		}
 		return true;
