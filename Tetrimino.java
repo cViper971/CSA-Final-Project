@@ -8,17 +8,17 @@ public class Tetrimino {
 			{{0,0},{0,1},{1,0},{1,1}},//Square
 			{{1,0},{0,1},{1,1},{2,1}},//T-block
 			{{0,1},{1,1},{1,0},{2,0}},//S-block
-			{{0,0},{0,1},{1,1},{2,1}}//Z-block
+			{{0,0},{1,0},{1,1},{2,1}}//Z-block
 	};
 	
 	static Color[] colors = {
-			Color.BLACK,
-			Color.BLUE,
-			Color.RED,
-			Color.GREEN,
-			Color.YELLOW,
-			Color.CYAN,
-			Color.MAGENTA,
+			new Color(176,255,244),//cyan
+			new Color(255,185,122),//orange
+			new Color(171,178,255),//blue
+			new Color(255,242,123),//yellow
+			new Color(255,125,131),//red
+			new Color(177,233,109),//green
+			new Color(249,172,254),//pink
 	};
 	int[][] shape;
 	Color color;
@@ -46,6 +46,10 @@ public class Tetrimino {
 	            shape[i][0] = -temp[1];
 	            shape[i][1] = temp[0]+1;
 	        }
+	}
+	
+	public void moveDown() {
+		y+=1;
 	}
 	
 	public int[][] getShape() {

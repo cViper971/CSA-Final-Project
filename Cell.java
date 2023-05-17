@@ -22,13 +22,12 @@ public class Cell {
 	public void paintCell(Graphics g) {
 		BufferedImage img=null;
 		try {
-			img = ImageIO.read(new File("src/Untitled.png"));
+			img = ImageIO.read(new File(Constants.img));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if(occupied) {
-			System.out.println(y*Constants.blockSize);
 			g.setColor(c);
 			g.fillRect(x*Constants.blockSize, y*Constants.blockSize, Constants.blockSize, Constants.blockSize);
 			g.drawImage(img, x*Constants.blockSize, y*Constants.blockSize, null);

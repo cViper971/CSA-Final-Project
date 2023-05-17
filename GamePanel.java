@@ -4,8 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
-
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -21,7 +24,7 @@ public class GamePanel extends JPanel{
 				board[i][j] = new Cell(j,i);
 			}
 		}
-		Timer t = new Timer(300,new timey());
+		Timer t = new Timer(Constants.tick,new timey());
 		t.start();
 		currT = new Tetrimino(Constants.gridWidth/2,1);
 		addKeyListener(new keyboard());
@@ -51,9 +54,11 @@ public class GamePanel extends JPanel{
 				if(canMove(currT.x+1,currT.y))
 					currT.setX(currT.getX()+1);
 			if(e.getKeyCode()==KeyEvent.VK_UP)
-				currT.rotateLeft();
+				//if(canRotate(false))
+					currT.rotateRight();
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				currT.rotateRight();
+				//if(canRotate(true))
+					currT.rotateLeft();
 			if(e.getKeyCode()==KeyEvent.VK_SPACE)
 				drop();
 			repaint();
@@ -67,29 +72,79 @@ public class GamePanel extends JPanel{
 	
 	public boolean isLanded() {
 		for(int i = 0;i<4;i++) {
-			if(currY(i)>=Constants.gridLength-2)
+			if(currY(i)>=Constants.gridLength-2) {
 				return true;
-			else if(board[currY(i)+1][currX(i)].isOccupied()==true){
+			}else if(board[currY(i)+1][currX(i)].isOccupied()==true){
 				return true;
 			}
 		}
 		return false;
 	}
 	
+	public void checkLines() {
+		for(int i=0;i<board.length;i++) {
+			boolean isFull = true;
+			for(Cell cell:board[i]) {
+				if(cell.isOccupied()==false)
+					isFull=false;
+			}
+			if(isFull) {
+				System.out.println("full line at: "+i);
+				for(int j=i;j>1;j--) {
+					for(int k=0;k<Constants.gridWidth;k++) {
+						setCell(k,j,board[j-1][k].getC(),board[j-1][k].isOccupied());
+					}
+				}
+			}
+		}
+		repaint();
+	}
+	
 	public boolean canMove(int x, int y) {
 		for(int i=0;i<4;i++) {
-			if(x+currT.shape[i][0]>Constants.gridWidth-1||x+currT.shape[i][0]<0)
-				return false;
-			if(board[currT.shape[i][1]+y][currT.shape[i][0]+x].isOccupied()==true)
+			if(!isOpen(x+currT.shape[i][0],y+currT.shape[i][1]))
 				return false;
 		}
 		return true;
 	}
+	
+	public boolean canRotate(boolean left) {
+		if(left) {
+			for(int i=0;i<4;i++) {
+				if(!isOpen(currY(i),-currX(i)))
+					return false;
+			}
+		}else {
+			for(int i=0;i<4;i++) {
+				if(!isOpen(-currY(i),currX(i)))
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isOpen(int x,int y) {
+		if(x>Constants.gridWidth-1||x<0)
+			return false;
+		if(y>Constants.gridLength-1||y<0)
+			return false;
+		if(board[y][x].isOccupied())
+			return false;
+		return true;
+	}
 
 	public void drawCurrent(Graphics g) {
-		for(int[] coord:currT.shape) {
+		BufferedImage img=null;
+		try {
+			img = ImageIO.read(new File(Constants.img));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		for(int i=0;i<4;i++) {
 			g.setColor(currT.color);
-			g.fillRect(Constants.blockSize*(currT.x+coord[0]), Constants.blockSize*(currT.y+coord[1]), Constants.blockSize, Constants.blockSize);
+			g.fillRect(Constants.blockSize*currX(i), Constants.blockSize*currY(i), Constants.blockSize, Constants.blockSize);
+			g.drawImage(img,currX(i)*Constants.blockSize, currY(i)*Constants.blockSize, null);
 		}
 	}
 	
@@ -97,6 +152,7 @@ public class GamePanel extends JPanel{
 		while(!isLanded())
 			currT.setY(currT.getY()+1);
 		updateGrid();
+		checkLines();
 	}
 	
 	public void updateGrid() {
@@ -142,10 +198,11 @@ public class GamePanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			currT.setY(currT.getY()+1);
+			currT.moveDown();
 			if(isLanded()) {
 				updateGrid();
 			}
+			checkLines();
 			repaint();
 		}
 		
