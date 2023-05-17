@@ -54,10 +54,10 @@ public class GamePanel extends JPanel{
 				if(canMove(currT.x+1,currT.y))
 					currT.setX(currT.getX()+1);
 			if(e.getKeyCode()==KeyEvent.VK_UP)
-				//if(canRotate(false))
+				if(canRotate(true))
 					currT.rotateRight();
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				//if(canRotate(true))
+				if(canRotate(false))
 					currT.rotateLeft();
 			if(e.getKeyCode()==KeyEvent.VK_SPACE)
 				drop();
@@ -109,14 +109,14 @@ public class GamePanel extends JPanel{
 	}
 	
 	public boolean canRotate(boolean left) {
-		if(left) {
+		if(!left) {
 			for(int i=0;i<4;i++) {
-				if(!isOpen(currY(i),-currX(i)))
+				if(!isOpen(currT.x+currT.shape[i][1],currT.y-currT.shape[i][0]))
 					return false;
 			}
 		}else {
 			for(int i=0;i<4;i++) {
-				if(!isOpen(-currY(i),currX(i)))
+				if(!isOpen(currT.x-currT.shape[i][1],currT.y+currT.shape[i][0]))
 					return false;
 			}
 		}
@@ -198,7 +198,8 @@ public class GamePanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			currT.moveDown();
+			if(canMove(currT.x,currT.y+1))
+				currT.moveDown();
 			if(isLanded()) {
 				updateGrid();
 			}
