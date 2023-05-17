@@ -101,7 +101,6 @@ public class GamePanel extends JPanel{
 	
 	public void updateGrid() {
 		for(int i = 0;i<4;i++) {
-			System.out.println("x: "+currX(i)+" y: "+currY(i));
 			setCell(currX(i),currY(i),currT.color,true);
 		}
 		currT = new Tetrimino(Constants.gridWidth/2,1);
