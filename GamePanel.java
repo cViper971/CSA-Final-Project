@@ -22,6 +22,7 @@ public class GamePanel extends JPanel{
 	Tetrimino currT;
 	BufferedImage Tile;
 	Timer t;
+	int tick = 500;
 	boolean grounded = false;
 	public GamePanel(){
 		board = new Cell[Constants.gridLength][Constants.gridWidth];
@@ -37,7 +38,7 @@ public class GamePanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 t = new Timer(Constants.tick,new timey());
+		 t = new Timer(tick,new timey());
 		t.start();
 		addKeyListener(new keyboard());
 		setFocusable(true);
@@ -76,11 +77,15 @@ public class GamePanel extends JPanel{
 				}
 			}
 				
-			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				if (canRotate(true))
-				{
-					currT.rotateLeft();
-				}
+			if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+//				if (canRotate(true))
+//				{
+//					currT.rotateLeft();
+//				}
+				t.setInitialDelay(0);
+				t.setDelay(50);
+				t.restart();
+			}
 			if(e.getKeyCode()==KeyEvent.VK_SPACE) {
 				currT.drop(board);
 				updateGrid();
@@ -91,7 +96,12 @@ public class GamePanel extends JPanel{
 		@Override
 		public void keyReleased(KeyEvent e) {
 			// TODO Auto-generated method stub
-			
+			if(e.getKeyCode()==KeyEvent.VK_DOWN)
+//				if (canRotate(true))
+//				{
+//					currT.rotateLeft();
+//				}
+				t.setDelay(500);
 		}
 	}
 	
