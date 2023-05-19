@@ -4,6 +4,7 @@ public class Tetrimino {
 	public double[][] shape;
 	public Color color;
 	public int x, y, pieceNum;
+	public GamePanel gp;
 	
 	public double[][][] shapes = {
 			{{0,0},{0,1},{0,2},{0,3}, {1, 2}},//Line
@@ -27,6 +28,7 @@ public class Tetrimino {
 	
 	
 	public Tetrimino(int x, int y) {
+		this.gp = gp;
 		this.x = x;
 		this.y = y;
 		int piece = (int)(Math.random()*7);
@@ -41,6 +43,16 @@ public class Tetrimino {
 		this.y = y;
 		this.pieceNum = piece;
 		shape = shapes[piece].clone();
+		color = colors[piece];
+		
+		
+	}
+	public Tetrimino (int x, int y, int piece, double[][] shape)
+	{
+		this.x = x;
+		this.y = y;
+		this.pieceNum = piece;
+		this.shape = shape;
 		color = colors[piece];
 		
 		
@@ -114,6 +126,22 @@ public class Tetrimino {
 		y+=1;
 	}
 	
+	public void drop(Cell[][] board) {
+		while(!isLanded(board))
+			y+=1;
+	}
+	
+	public boolean isLanded(Cell[][] board) {
+		for(int i = 0;i<4;i++) {
+			if(y+shape[i][1]>=Constants.gridLength-2) {
+				return true;
+			}else if(board[(int)(y+shape[i][1])+1][(int)(x+shape[i][0])].isOccupied()==true){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public double[][] getShape() {
 		return shape;
 	}
@@ -142,5 +170,9 @@ public class Tetrimino {
 	public Tetrimino copyTetrimino ()
 	{
 		return new Tetrimino (x, y, pieceNum);
+	}
+	public Tetrimino copy ()
+	{
+		return new Tetrimino (x, y, pieceNum,shape);
 	}
 }

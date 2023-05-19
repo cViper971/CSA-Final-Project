@@ -1,5 +1,7 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,6 +20,9 @@ public class GamePanel extends JPanel{
 	int boxY = 100;
 	Cell[][] board;
 	Tetrimino currT;
+	BufferedImage Tile;
+	Timer t;
+	boolean grounded = false;
 	public GamePanel(){
 		board = new Cell[Constants.gridLength][Constants.gridWidth];
 		for(int i=0;i<Constants.gridLength;i++) {
@@ -25,16 +30,25 @@ public class GamePanel extends JPanel{
 				board[i][j] = new Cell(j,i);
 			}
 		}
-		Timer t = new Timer(Constants.tick,new timey());
+		Tile =null;
+		try {
+			Tile = ImageIO.read(new File(Constants.img));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 t = new Timer(Constants.tick,new timey());
 		t.start();
-		currT = new Tetrimino(Constants.gridWidth/2,1);
 		addKeyListener(new keyboard());
 		setFocusable(true);
+		System.out.println(this);
+		currT = new Tetrimino(Constants.gridWidth/2,1);
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		drawCurrent(g);
+		drawOutline(g);
 		for(Cell[] cells:board)
 			for(Cell c:cells)
 				c.paintCell(g);
@@ -67,8 +81,11 @@ public class GamePanel extends JPanel{
 				{
 					currT.rotateLeft();
 				}
-			if(e.getKeyCode()==KeyEvent.VK_SPACE)
-				drop();
+			if(e.getKeyCode()==KeyEvent.VK_SPACE) {
+				currT.drop(board);
+				updateGrid();
+				checkLines();
+			}
 			repaint();
 		}
 		@Override
@@ -76,17 +93,6 @@ public class GamePanel extends JPanel{
 			// TODO Auto-generated method stub
 			
 		}
-	}
-	
-	public boolean isLanded() {
-		for(int i = 0;i<4;i++) {
-			if(currY(i)>=Constants.gridLength-2) {
-				return true;
-			}else if(board[currY(i)+1][currX(i)].isOccupied()==true){
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public void checkLines() {
@@ -160,32 +166,34 @@ public class GamePanel extends JPanel{
 	}
 
 	public void drawCurrent(Graphics g) {
-		BufferedImage img=null;
-		try {
-			img = ImageIO.read(new File(Constants.img));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		for(int i=0;i<4;i++) {
 			g.setColor(currT.color);
 			g.fillRect(Constants.blockSize*currX(i), Constants.blockSize*currY(i), Constants.blockSize, Constants.blockSize);
-			g.drawImage(img,currX(i)*Constants.blockSize, currY(i)*Constants.blockSize, null);
+			g.drawImage(Tile,currX(i)*Constants.blockSize, currY(i)*Constants.blockSize, null);
 		}
 	}
 	
-	public void drop() {
-		while(!isLanded())
-			currT.setY(currT.getY()+1);
-		updateGrid();
-		checkLines();
+	public void drawOutline(Graphics g) {
+		Graphics2D g2 = (Graphics2D)g;
+		Tetrimino copy = currT.copy();
+		copy.drop(board);
+		g2.setStroke(new BasicStroke(3));
+		for(int i= 0;i<4;i++) {
+			g.drawRect((int)(Constants.blockSize*(copy.x+copy.shape[i][0])),(int)(Constants.blockSize*(copy.y+copy.shape[i][1])), Constants.blockSize, Constants.blockSize);
+		}
 	}
 	
 	public void updateGrid() {
 		for(int i = 0;i<4;i++) {
 			setCell(currX(i),currY(i),currT.color,true);
 		}
-		currT = new Tetrimino(Constants.gridWidth/2,1);
+		currT = new Tetrimino(Constants.gridWidth/2,0);
+		for(int i=0;i<4;i++) {
+			if(!isOpen(currX(i),currY(i))) {
+				t.stop();
+				System.out.println("game over");
+			}
+		}
 	}
 	
 	public int currX(int i) {
@@ -224,17 +232,18 @@ public class GamePanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			
-			
-			if(canMove(currT.x,currT.y+1))
+			if(grounded) {
+				if(currT.isLanded(board))
+					updateGrid();
+				grounded = false;
+			}else if(canMove(currT.x,currT.y+1))
 				currT.moveDown();
-			if(isLanded()) {
-				updateGrid();
+			if(currT.isLanded(board)) {
+				grounded = true;
+
 			}
 			checkLines();
 			repaint();
-			
-			
 		}
 		
 	}
