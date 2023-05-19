@@ -7,6 +7,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -54,11 +55,18 @@ public class GamePanel extends JPanel{
 				if(canMove(currT.x+1,currT.y))
 					currT.setX(currT.getX()+1);
 			if(e.getKeyCode()==KeyEvent.VK_UP)
-				if(canRotate(true))
+			{
+				if (canRotate(false))
+				{
 					currT.rotateRight();
+				}
+			}
+				
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				if(canRotate(false))
+				if (canRotate(true))
+				{
 					currT.rotateLeft();
+				}
 			if(e.getKeyCode()==KeyEvent.VK_SPACE)
 				drop();
 			repaint();
@@ -102,22 +110,40 @@ public class GamePanel extends JPanel{
 	
 	public boolean canMove(int x, int y) {
 		for(int i=0;i<4;i++) {
-			if(!isOpen(x+currT.shape[i][0],y+currT.shape[i][1]))
+			if(!isOpen(x+(int)currT.shape[i][0],y+(int)currT.shape[i][1]))
 				return false;
 		}
 		return true;
 	}
 	
 	public boolean canRotate(boolean left) {
+		
+		Tetrimino copy = currT.copyTetrimino();
+		
+		
 		if(!left) {
-			for(int i=0;i<4;i++) {
-				if(!isOpen(currT.x+currT.shape[i][1],currT.y-currT.shape[i][0]))
+			
+			copy.rotateRight();
+			
+			for (int i = 0; i < 4; i++)
+			{
+				if (!isOpen(copy.x + (int)(copy.shape[i][0]), copy.y + (int)(copy.shape[i][1])))
+				{
 					return false;
+				}
 			}
-		}else {
-			for(int i=0;i<4;i++) {
-				if(!isOpen(currT.x-currT.shape[i][1],currT.y+currT.shape[i][0]))
+			
+			
+		} else {
+			
+			copy.rotateLeft();
+			
+			for (int i = 0; i < 4; i++)
+			{
+				if (!isOpen(copy.x + (int)(copy.shape[i][0]), copy.y + (int)(copy.shape[i][1])))
+				{
 					return false;
+				}
 			}
 		}
 		return true;
@@ -163,10 +189,10 @@ public class GamePanel extends JPanel{
 	}
 	
 	public int currX(int i) {
-		return currT.x + currT.shape[i][0];
+		return currT.x + (int)currT.shape[i][0];
 	}
 	public int currY(int i) {
-		return currT.y + currT.shape[i][1];
+		return currT.y + (int)currT.shape[i][1];
 	}
 	public int getBoxX() {
 		return boxX;
@@ -198,6 +224,8 @@ public class GamePanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
+			
+			
 			if(canMove(currT.x,currT.y+1))
 				currT.moveDown();
 			if(isLanded()) {
@@ -205,6 +233,8 @@ public class GamePanel extends JPanel{
 			}
 			checkLines();
 			repaint();
+			
+			
 		}
 		
 	}
