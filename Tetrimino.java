@@ -1,19 +1,20 @@
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 public class Tetrimino {
-	public double[][] shape;
+	public int[][] shape;
 	public Color color;
 	public int x, y, pieceNum;
-	public GamePanel gp;
 	
-	public double[][][] shapes = {
-			{{0,0},{0,1},{0,2},{0,3}, {1, 2}},//Line
-			{{0,0},{0,1},{0,2},{1,2}, {0.5, 1.5}},//L-block
-			{{1,0},{1,1},{1,2},{0,2}, {1.5, 1.5}},//J-block
-			{{0,0},{0,1},{1,0},{1,1}, {1, 1}},//Square
-			{{1,0},{0,1},{1,1},{2,1}, {1.5, 1.5}},//T-block
-			{{0,1},{1,1},{1,0},{2,0}, {1.5, 1.5}},//S-block
-			{{0,0},{1,0},{1,1},{2,1}, {1.5, 1.5}}//Z-block
+	public int[][][] shapes = {
+			{{0,0},{0,1},{0,2},{0,3}},//Line
+			{{0,0},{0,1},{0,2},{1,2}},//L-block
+			{{1,0},{1,1},{1,2},{0,2}},//J-block
+			{{0,0},{0,1},{1,0},{1,1}},//Square
+			{{1,0},{0,1},{1,1},{2,1}},//T-block
+			{{0,1},{1,1},{1,0},{2,0}},//S-block
+			{{0,0},{1,0},{1,1},{2,1}}//Z-block
 	};
 	
 	public static Color[] colors = {
@@ -26,12 +27,22 @@ public class Tetrimino {
 			new Color(249,172,254),//pink
 	};
 	
+	// Parallel Array with points mapped to each shape
+	public double[][] rotationPoints = {
+			{1, 2},
+			{0.5, 1.5},
+			{1.5, 1.5},
+			{1, 1},
+			{1.5, 1.5},
+			{1.5, 1.5},
+			{1.5, 1.5}
+	};
+	
 	
 	public Tetrimino(int x, int y) {
-		this.gp = gp;
 		this.x = x;
 		this.y = y;
-		int piece = (int)(Math.random()*7);
+		int piece = (int)(Math.random() * 7);
 		this.pieceNum = piece;
 		shape = shapes[pieceNum].clone();
 		color = colors[pieceNum];
@@ -47,15 +58,13 @@ public class Tetrimino {
 		
 		
 	}
-	public Tetrimino (int x, int y, int piece, double[][] shape)
+	public Tetrimino (int x, int y, int piece, int[][] shape)
 	{
 		this.x = x;
 		this.y = y;
 		this.pieceNum = piece;
 		this.shape = shape;
 		color = colors[piece];
-		
-		
 	}
 	
 	/* 
@@ -66,8 +75,8 @@ public class Tetrimino {
 	public void rotateLeft () {
 		
 		// All calculations are relative to the upper left hand corner (0, 0)
-		double rX = shape[shape.length - 1][0];
-		double rY = shape[shape.length - 1][1];
+		double rX = rotationPoints[pieceNum][0];
+		double rY = rotationPoints[pieceNum][1];
 		
 		rY = -rY;
 		
@@ -75,7 +84,7 @@ public class Tetrimino {
 		
 		for (int i = 0; i < 4; i++)
 		{
-			double[] temp = shape[i].clone();
+			int[] temp = shape[i].clone();
 			
 			int[] offsets = offsets(false);
 			
@@ -90,8 +99,8 @@ public class Tetrimino {
 	public void rotateRight () {
 		
 		// All calculations are relative to the upper left hand corner (0, 0)
-		double rX = shape[shape.length - 1][0];
-		double rY = shape[shape.length - 1][1];
+		double rX = rotationPoints[pieceNum][0];
+		double rY = rotationPoints[pieceNum][1];
 		
 		rY = -rY;
 		
@@ -99,7 +108,7 @@ public class Tetrimino {
 		
 		for (int i = 0; i < 4; i++)
 		{
-			double[] temp = shape[i].clone();
+			int[] temp = shape[i].clone();
 			
 			int[] offsets = offsets(true);
 			
@@ -142,10 +151,47 @@ public class Tetrimino {
 		return false;
 	}
 	
-	public double[][] getShape() {
+	public void drawCurrent(Graphics g, BufferedImage Tile) {
+		for(int i=0;i<4;i++) {
+			int currY = y + shape[i][1];
+			int currX = x + shape[i][0];
+			
+			
+			g.setColor(color);
+			g.fillRect(Constants.blockSize*currX, Constants.blockSize*currY, Constants.blockSize, Constants.blockSize);
+			g.drawImage(Tile,currX*Constants.blockSize, currY*Constants.blockSize, null);
+		}
+	}
+	
+	// Using the non-relative tetris coordinates
+	public void drawCurrent(Graphics g, BufferedImage Tile, int pX, int pY)
+	{
+		for(int i=0;i<4;i++) {
+			int currY = shape[i][1];
+			int currX = shape[i][0];
+			
+			
+			g.setColor(color);
+			g.fillRect(Constants.blockSize*currX + pX, Constants.blockSize*currY + pY, Constants.blockSize, Constants.blockSize);
+			g.drawImage(Tile,currX*Constants.blockSize + pX, currY*Constants.blockSize + pY, null);
+		}
+	}
+	
+	public int[][] deepClone (int[][] array)
+	{
+		int[][] copy = new int[array.length][array[0].length];
+		
+		for (int i = 0; i < array.length; i++)
+		{
+			copy[i] = array[i].clone();
+		}
+		return copy;
+	}
+	
+	public int[][] getShape() {
 		return shape;
 	}
-	public void setShape(double[][] shape) {
+	public void setShape(int[][] shape) {
 		this.shape = shape;
 	}
 	public Color getColor() {
@@ -163,6 +209,7 @@ public class Tetrimino {
 	public int getY() {
 		return y;
 	}
+	
 	public void setY(int y) {
 		this.y = y;
 	}
@@ -173,6 +220,6 @@ public class Tetrimino {
 	}
 	public Tetrimino copy ()
 	{
-		return new Tetrimino (x, y, pieceNum,shape);
+		return new Tetrimino (x, y, pieceNum, deepClone(shape));
 	}
 }

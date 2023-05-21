@@ -16,13 +16,16 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GamePanel extends JPanel{
-	int boxX = 100;
-	int boxY = 100;
-	Cell[][] board;
-	Tetrimino currT;
-	BufferedImage Tile;
-	Timer t;
-	int tick = 500;
+	public Cell[][] board;
+	public Tetrimino currT;
+	public Tetrimino nextT;
+	
+	public long score;
+	
+	public BufferedImage Tile;
+	public Timer t;
+	
+	
 	boolean grounded = false;
 	public GamePanel(){
 		board = new Cell[Constants.gridLength][Constants.gridWidth];
@@ -38,21 +41,28 @@ public class GamePanel extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 t = new Timer(tick,new timey());
+		
+		t = new Timer(Constants.tick,new timey());
 		t.start();
 		addKeyListener(new keyboard());
 		setFocusable(true);
 		System.out.println(this);
-		currT = new Tetrimino(Constants.gridWidth/2,1);
+		
+		currT = new Tetrimino(Constants.gridWidth/2, 1);
+		nextT = new Tetrimino(Constants.gridWidth/2, 1);
 	}
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		drawCurrent(g);
+		
+		currT.drawCurrent(g, Tile);
 		drawOutline(g);
 		for(Cell[] cells:board)
 			for(Cell c:cells)
 				c.paintCell(g);
+		
+		
+		
 	}
 	
 	private class keyboard implements KeyListener{
@@ -106,21 +116,31 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void checkLines() {
+		
+		int lines = 0;
+		
 		for(int i=0;i<board.length;i++) {
 			boolean isFull = true;
 			for(Cell cell:board[i]) {
 				if(cell.isOccupied()==false)
+				{
 					isFull=false;
+					break;
+				}
 			}
+			
 			if(isFull) {
+				lines += 1;
 				System.out.println("full line at: "+i);
-				for(int j=i;j>1;j--) {
+				for(int j=i;j>=1;j--) {
 					for(int k=0;k<Constants.gridWidth;k++) {
 						setCell(k,j,board[j-1][k].getC(),board[j-1][k].isOccupied());
 					}
 				}
 			}
 		}
+		
+		score += lines * 40;
 		repaint();
 	}
 	
@@ -134,8 +154,10 @@ public class GamePanel extends JPanel{
 	
 	public boolean canRotate(boolean left) {
 		
-		Tetrimino copy = currT.copyTetrimino();
+		Tetrimino copy = currT.copy();
 		
+		System.out.println(copy.rotationPoints);
+		System.out.println(currT.rotationPoints);
 		
 		if(!left) {
 			
@@ -174,14 +196,6 @@ public class GamePanel extends JPanel{
 			return false;
 		return true;
 	}
-
-	public void drawCurrent(Graphics g) {
-		for(int i=0;i<4;i++) {
-			g.setColor(currT.color);
-			g.fillRect(Constants.blockSize*currX(i), Constants.blockSize*currY(i), Constants.blockSize, Constants.blockSize);
-			g.drawImage(Tile,currX(i)*Constants.blockSize, currY(i)*Constants.blockSize, null);
-		}
-	}
 	
 	public void drawOutline(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
@@ -197,7 +211,9 @@ public class GamePanel extends JPanel{
 		for(int i = 0;i<4;i++) {
 			setCell(currX(i),currY(i),currT.color,true);
 		}
-		currT = new Tetrimino(Constants.gridWidth/2,0);
+		currT = nextT;
+		nextT = new Tetrimino(Constants.gridWidth/2,0);
+		
 		for(int i=0;i<4;i++) {
 			if(!isOpen(currX(i),currY(i))) {
 				t.stop();
@@ -212,21 +228,6 @@ public class GamePanel extends JPanel{
 	public int currY(int i) {
 		return currT.y + (int)currT.shape[i][1];
 	}
-	public int getBoxX() {
-		return boxX;
-	}
-
-	public void setBoxX(int boxX) {
-		this.boxX = boxX;
-	}
-
-	public int getBoxY() {
-		return boxY;
-	}
-
-	public void setBoxY(int boxY) {
-		this.boxY = boxY;
-	}
 
 	public Cell getCell(int x, int y) {
 		return board[x][y];
@@ -237,11 +238,13 @@ public class GamePanel extends JPanel{
 		this.board[y][x].setOccupied(occupied);
 	}
 	
-	public class timey implements ActionListener{
+	private class timey implements ActionListener{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
+			
+			
 			if(grounded) {
 				if(currT.isLanded(board))
 					updateGrid();
@@ -254,6 +257,9 @@ public class GamePanel extends JPanel{
 			}
 			checkLines();
 			repaint();
+			
+			
+			
 		}
 		
 	}
