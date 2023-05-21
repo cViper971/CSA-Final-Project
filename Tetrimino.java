@@ -7,7 +7,7 @@ public class Tetrimino {
 	public Color color;
 	public int x, y, pieceNum;
 	
-	public int[][][] shapes = {
+	public static int[][][] shapes = {
 			{{0,0},{0,1},{0,2},{0,3}},//Line
 			{{0,0},{0,1},{0,2},{1,2}},//L-block
 			{{1,0},{1,1},{1,2},{0,2}},//J-block
@@ -28,7 +28,7 @@ public class Tetrimino {
 	};
 	
 	// Parallel Array with points mapped to each shape
-	public double[][] rotationPoints = {
+	public static double[][] rotationPoints = {
 			{1, 2},
 			{0.5, 1.5},
 			{1.5, 1.5},
@@ -40,23 +40,12 @@ public class Tetrimino {
 	
 	
 	public Tetrimino(int x, int y) {
-		this.x = x;
-		this.y = y;
-		int piece = (int)(Math.random() * 7);
-		this.pieceNum = piece;
-		shape = shapes[pieceNum].clone();
-		color = colors[pieceNum];
+		this(x,y,(int)(Math.random() * 7));
 	}
 	
 	public Tetrimino (int x, int y, int piece)
 	{
-		this.x = x;
-		this.y = y;
-		this.pieceNum = piece;
-		shape = shapes[piece].clone();
-		color = colors[piece];
-		
-		
+		this(x,y,piece,deepClone(shapes[piece]));
 	}
 	public Tetrimino (int x, int y, int piece, int[][] shape)
 	{
@@ -177,7 +166,7 @@ public class Tetrimino {
 		}
 	}
 	
-	public int[][] deepClone (int[][] array)
+	public static int[][] deepClone (int[][] array)
 	{
 		int[][] copy = new int[array.length][array[0].length];
 		

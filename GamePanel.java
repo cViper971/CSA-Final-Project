@@ -60,9 +60,6 @@ public class GamePanel extends JPanel{
 		for(Cell[] cells:board)
 			for(Cell c:cells)
 				c.paintCell(g);
-		
-		
-		
 	}
 	
 	private class keyboard implements KeyListener{
@@ -107,10 +104,6 @@ public class GamePanel extends JPanel{
 		public void keyReleased(KeyEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-//				if (canRotate(true))
-//				{
-//					currT.rotateLeft();
-//				}
 				t.setDelay(500);
 		}
 	}
@@ -249,6 +242,7 @@ public class GamePanel extends JPanel{
 				if(currT.isLanded(board))
 					updateGrid();
 				grounded = false;
+				currT.moveDown();
 			}else if(canMove(currT.x,currT.y+1))
 				currT.moveDown();
 			if(currT.isLanded(board)) {
@@ -257,10 +251,6 @@ public class GamePanel extends JPanel{
 			}
 			checkLines();
 			repaint();
-			
-			
-			
 		}
-		
 	}
 }
