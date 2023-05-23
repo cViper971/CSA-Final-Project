@@ -46,7 +46,6 @@ public class GamePanel extends JPanel{
 		t.start();
 		addKeyListener(new keyboard());
 		setFocusable(true);
-		System.out.println(this);
 		
 		currT = new Tetrimino(Constants.gridWidth/2, 1);
 		nextT = new Tetrimino(Constants.gridWidth/2, 1);
@@ -54,6 +53,7 @@ public class GamePanel extends JPanel{
 	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		System.out.print("repainted");
 		
 		currT.drawCurrent(g, Tile);
 		drawOutline(g);
@@ -116,6 +116,7 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void checkLines() {
+		System.out.println("checking");
 		
 		int lines = 0;
 		
@@ -128,11 +129,37 @@ public class GamePanel extends JPanel{
 					break;
 				}
 			}
+			System.out.println(i);
 			
 			if(isFull) {
+				System.out.println(i);
+				repaint();
 				lines += 1;
-				System.out.println("full line at: "+i);
 				
+
+				for(int j=0;j<=Constants.gridWidth/2;j++) {
+					System.out.println("("+(Constants.gridWidth/2+j)+","+i+")");
+					setCell(5,5, Color.white,true);
+					//setCell(Constants.gridWidth/2+j,i, Color.white,false);
+					setCell(Constants.gridWidth/2-j,i, Color.white,false);
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+	
+				for(int j=0;j<=Constants.gridWidth/2;j++) {
+					setCell(5,j, Color.white,true);
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					repaint();
+				}
 				
 				for(int j=i;j>=1;j--) {
 					for(int k=0;k<Constants.gridWidth;k++) {
@@ -141,9 +168,8 @@ public class GamePanel extends JPanel{
 				}
 			}
 		}
-		
-		score += lines * 40;
 		repaint();
+		score += lines * 40;
 	}
 	
 	
@@ -159,9 +185,6 @@ public class GamePanel extends JPanel{
 	public boolean canRotate(boolean left) {
 		
 		Tetrimino copy = currT.copy();
-		
-		System.out.println(copy.rotationPoints);
-		System.out.println(currT.rotationPoints);
 		
 		if(!left) {
 			
@@ -250,6 +273,8 @@ public class GamePanel extends JPanel{
 			if(grounded) {
 				if(currT.isLanded(board))
 					updateGrid();
+				else
+					currT.moveDown();
 				grounded = false;
 			}else if(canMove(currT.x,currT.y+1))
 				currT.moveDown();
@@ -258,10 +283,6 @@ public class GamePanel extends JPanel{
 
 			}
 			checkLines();
-			repaint();
-			
-			
-			
 		}
 		
 	}

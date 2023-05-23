@@ -14,10 +14,11 @@ public class TetrisDriver {
     	 frame.setSize(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + 9);
     	 frame.getContentPane().setBackground(Color.WHITE);
     	 
-    	 //MainMenu main = new MainMenu();
+    	 MainMenu main = new MainMenu();
     	 
     	 
          GamePanel panel = new GamePanel();
+         panel.setBackground(new Color(0,0,0));
          
          panel.setPreferredSize(new Dimension(Constants.blockSize*Constants.gridWidth,Constants.blockSize*Constants.gridLength));
          panel.setBounds(0, 0, Constants.blockSize*Constants.gridWidth, Constants.blockSize*Constants.gridLength);
@@ -27,7 +28,7 @@ public class TetrisDriver {
          
          GameSideBar sideBar = new GameSideBar(width, height, panel);
          sideBar.setPreferredSize(new Dimension(width, height));
-         sideBar.setBounds(Constants.blockSize*Constants.gridWidth, 0, Constants.mainWindowWidth, Constants.mainWindowHeight);
+         sideBar.setBounds(Constants.blockSize*Constants.gridWidth, 0, Constants.mainWindowWidth, Constants.blockSize*Constants.gridLength);
  		
          JPanel container = new JPanel();
          container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
