@@ -7,30 +7,32 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Cell {
-	boolean occupied;
-	Color c;
-	int x;
-	int y;
+	public boolean occupied;
+	public Color c;
+	public int x;
+	public int y;
+	public BufferedImage tile;
 	
 	public Cell(int x, int y) {
 		this.x = x;
 		this.y = y;
 		c = Color.BLACK;
 		occupied = false;
-	}
-	
-	public void paintCell(Graphics g) {
-		BufferedImage img=null;
+		
 		try {
-			img = ImageIO.read(new File(Constants.img));
+			tile = ImageIO.read(new File(Constants.img));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void paintCell(Graphics g) {
+		
 		if(occupied) {
 			g.setColor(c);
 			g.fillRect(x*Constants.blockSize, y*Constants.blockSize, Constants.blockSize, Constants.blockSize);
-			g.drawImage(img, x*Constants.blockSize, y*Constants.blockSize, null);
+			g.drawImage(tile, x*Constants.blockSize, y*Constants.blockSize, null);
 		}
 	}
 	

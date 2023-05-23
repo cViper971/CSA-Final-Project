@@ -60,6 +60,9 @@ public class GamePanel extends JPanel{
 		for(Cell[] cells:board)
 			for(Cell c:cells)
 				c.paintCell(g);
+		
+		
+		
 	}
 	
 	private class keyboard implements KeyListener{
@@ -104,6 +107,10 @@ public class GamePanel extends JPanel{
 		public void keyReleased(KeyEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
+//				if (canRotate(true))
+//				{
+//					currT.rotateLeft();
+//				}
 				t.setDelay(500);
 		}
 	}
@@ -125,6 +132,8 @@ public class GamePanel extends JPanel{
 			if(isFull) {
 				lines += 1;
 				System.out.println("full line at: "+i);
+				
+				
 				for(int j=i;j>=1;j--) {
 					for(int k=0;k<Constants.gridWidth;k++) {
 						setCell(k,j,board[j-1][k].getC(),board[j-1][k].isOccupied());
@@ -136,6 +145,8 @@ public class GamePanel extends JPanel{
 		score += lines * 40;
 		repaint();
 	}
+	
+	
 	
 	public boolean canMove(int x, int y) {
 		for(int i=0;i<4;i++) {
@@ -236,13 +247,10 @@ public class GamePanel extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			
-			
 			if(grounded) {
 				if(currT.isLanded(board))
 					updateGrid();
 				grounded = false;
-				currT.moveDown();
 			}else if(canMove(currT.x,currT.y+1))
 				currT.moveDown();
 			if(currT.isLanded(board)) {
@@ -251,6 +259,11 @@ public class GamePanel extends JPanel{
 			}
 			checkLines();
 			repaint();
+			
+			
+			
 		}
+		
 	}
+	
 }

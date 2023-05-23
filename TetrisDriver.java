@@ -11,16 +11,19 @@ public class TetrisDriver {
     public static void main(String[] args){
     	 JFrame frame = new JFrame();
          //frame.setSize(Constants.blockSize*Constants.gridWidth+16,Constants.blockSize*Constants.gridLength+9);
-    	 frame.setSize(Constants.mainWindowWidth, Constants.blockSize*Constants.gridLength+9);
+    	 frame.setSize(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + 9);
     	 frame.getContentPane().setBackground(Color.WHITE);
     	 
+    	 //MainMenu main = new MainMenu();
+    	 
+    	 
          GamePanel panel = new GamePanel();
-         //panel.setSize(Constants.blockSize*Constants.gridWidth,Constants.blockSize*Constants.gridLength);
+         
          panel.setPreferredSize(new Dimension(Constants.blockSize*Constants.gridWidth,Constants.blockSize*Constants.gridLength));
          panel.setBounds(0, 0, Constants.blockSize*Constants.gridWidth, Constants.blockSize*Constants.gridLength);
          
-         int width = Constants.mainWindowWidth - Constants.blockSize*Constants.gridWidth - 16;
-         int height = Constants.mainWindowHeight - Constants.blockSize*Constants.gridLength - 9;
+         int width = Constants.mainWindowWidth - Constants.blockSize*Constants.gridWidth;
+         int height = Constants.mainWindowHeight - Constants.blockSize*Constants.gridLength;
          
          GameSideBar sideBar = new GameSideBar(width, height, panel);
          sideBar.setPreferredSize(new Dimension(width, height));
@@ -28,12 +31,16 @@ public class TetrisDriver {
  		
          JPanel container = new JPanel();
          container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
-         
+        
+    	 
          
          container.add(panel);
          container.add(sideBar);
          
+    	 
+    	 //frame.add(main);
          frame.add(container);
+         
         
          frame.setVisible(true);
          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
