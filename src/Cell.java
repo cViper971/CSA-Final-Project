@@ -14,10 +14,15 @@ public class Cell {
 	public BufferedImage tile;
 	
 	public Cell(int x, int y) {
+		this(x, y, Color.BLACK, false);
+	}
+	
+	public Cell (int x, int y, Color col, boolean occupied)
+	{
 		this.x = x;
 		this.y = y;
-		c = Color.BLACK;
-		occupied = false;
+		this.c = col;
+		this.occupied = occupied;
 		
 		try {
 			tile = ImageIO.read(new File(Constants.img));
@@ -47,5 +52,10 @@ public class Cell {
 	}
 	public void setColor(Color c) {
 		this.c = c;
+	}
+	
+	public Cell copyCell ()
+	{
+		return new Cell(this.x, this.y, this.c, this.occupied);
 	}
 }
