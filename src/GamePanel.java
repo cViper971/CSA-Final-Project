@@ -28,7 +28,7 @@ public class GamePanel extends JPanel{
 	public Timer t;
 	
 	public int amountTicks = 0;
-	public int movementTickDelay = 50;
+	public int movementTickDelay = 80;
 	public int animationTickDelay = 5;
 	public Cell[] animationBlocks = new Cell[8];
 	public boolean breakAnimationStart = false;
@@ -115,8 +115,7 @@ public class GamePanel extends JPanel{
 				
 			}
 			if(e.getKeyCode()==KeyEvent.VK_SPACE) {
-				currT.drop(board);
-				//updateScore(2*currT.drop(board));
+				updateScore(2*currT.drop(board));
 				updateGrid();
 				checkLines();
 			}
@@ -126,7 +125,7 @@ public class GamePanel extends JPanel{
 		public void keyReleased(KeyEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				movementTickDelay = 50;
+				movementTickDelay = 80;
 		}
 	}
 
@@ -153,32 +152,6 @@ public class GamePanel extends JPanel{
 			if(isFull) {
 				lines += 1;
 
-//
-//				for(int j=0;j<=Constants.gridWidth/2;j++) {
-//					System.out.println("("+(Constants.gridWidth/2+j)+","+i+")");
-//					setCell(5,5, Color.white,true);
-//					//setCell(Constants.gridWidth/2+j,i, Color.white,false);
-//					setCell(Constants.gridWidth/2-j,i, Color.white,false);
-//					try {
-//						//Thread.sleep(500);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				}
-				
-				
-				
-				
-				/*	
-				for(int j=i;j>=1;j--) {
-					for(int k=0;k<Constants.gridWidth;k++) {
-						setCell(k,j,board[j-1][k].getC(),board[j-1][k].isOccupied());
-					}
-				}
-				
-				*/
-				
 				lowestIndex = i;
 				
 				if (board.length % 2 == 0)
@@ -444,32 +417,28 @@ public class GamePanel extends JPanel{
 			// TODO Auto-generated method stub
 			
 			
-			
-			if(grounded) {
-				if(currT.isLanded(board))
-				{
-					checkLines();
-					updateGrid();
-				}
-					
-				else
+			if (amountTicks >= movementTickDelay) 
+			{
+				if(grounded) {
+					if(currT.isLanded(board))
+					{
+						checkLines();
+						updateGrid();
+					}
+					else
+						currT.moveDown();
+					grounded = false;
+				}else if(canMove(currT.x,currT.y+1) && !breakAnimationStart)
 					currT.moveDown();
-				
-				
-				grounded = false;
-			}else if(canMove(currT.x,currT.y+1) && !breakAnimationStart)
-				if (amountTicks >= movementTickDelay) 
-				{
-					currT.moveDown();
+					if(movementTickDelay==5)
+						updateScore(1);
 					amountTicks = 0;
+					
+				if(currT.isLanded(board)) {
+					grounded = true;
+	
 				}
-				
-			if(currT.isLanded(board)) {
-				grounded = true;
-
 			}
-			if(t.getDelay()==50)
-				updateScore(1);
 			
 			
 			amountTicks+= 1;

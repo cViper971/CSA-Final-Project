@@ -26,8 +26,6 @@ public class TetrisFrame extends JFrame {
 	// Testing mode boots you straight into the game
 	public TetrisFrame (String window, boolean testingMode)
 	{
-		
-		
 		super(window);
 		panelNum = 0;
 		setSize(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + Constants.blockSize + 9);
@@ -45,8 +43,6 @@ public class TetrisFrame extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        
-        
 	}
 	
 	private class ClickListener implements MouseListener {
@@ -66,8 +62,6 @@ public class TetrisFrame extends JFrame {
 			
 			if (main.Play.isMouseInside(mX, mY))
 			{
-				System.out.println("Clicked!");
-				
 				getContentPane().remove(main);
 				
 				getContentPane().setFocusable(false);
@@ -77,12 +71,18 @@ public class TetrisFrame extends JFrame {
 				panelNum = 1;
 		        
 			}
-			
-			
-			
-			
 				
-			
+			if (main.Settings.isMouseInside(mX, mY))
+			{
+				getContentPane().remove(main);
+				
+				getContentPane().setFocusable(false);
+				loadSettings();
+				getContentPane().revalidate();
+				
+				panelNum = 1;
+		        
+			}
 		}
 
 		@Override
@@ -122,9 +122,8 @@ public class TetrisFrame extends JFrame {
         
 		panel = new GamePanel(sideBar);
 		
-		// https://stackoverflow.com/questions/1082504/requesting-focus-in-window
+//		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
-
 			@Override
 			public void run() {
 				panel.requestFocus();
@@ -135,7 +134,6 @@ public class TetrisFrame extends JFrame {
 		        panel.setBounds(0, 0, Constants.blockSize*Constants.gridWidth, Constants.blockSize*Constants.gridLength);
 				
 			}
-			
 		});
 		 
         container = new JPanel();
@@ -149,5 +147,11 @@ public class TetrisFrame extends JFrame {
         container.repaint();
         sideBar.repaint();
         
+	}
+	
+	public void loadSettings() {
+		SettingsPanel page = new SettingsPanel();
+		getContentPane().add(page);
+		
 	}
 }
