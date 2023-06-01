@@ -23,8 +23,8 @@ public class GameSideBar extends JPanel{
 	private Tetrimino nextTetrimino;
 	private int w, h;
 	private long score;
+	private int level = 1;
 	private long highScore;
-	private int level;
 	private BufferedImage Tile;
 	private Scanner sc;
 	private PrintWriter pw;
@@ -42,21 +42,21 @@ public class GameSideBar extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
-
 		try {
 			sc = new Scanner(new File("highScore.txt"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		highScore = sc.nextLong();
+
 		try {
 			pw = new PrintWriter(new File("highScore.txt"));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			highScore = sc.nextLong();
 		} catch (Exception e) {
@@ -64,15 +64,11 @@ public class GameSideBar extends JPanel{
 			highScore = 0;
 			pw.close();
 		}
-		
-		
 	}
 
 	public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);
-		
-		int y = 0;
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -80,27 +76,26 @@ public class GameSideBar extends JPanel{
 		g.setColor(Color.BLACK);
 		g.setFont(new Font ("Monospace", Font.BOLD, 20));
 
-		int widthUpcoming = g.getFontMetrics().stringWidth("Upcoming Piece");
-		g.drawString("Upcoming Piece", (w - widthUpcoming) / 2, y + 30);
-
+		int offset = g.getFontMetrics().stringWidth("Upcoming Piece");
+		
+		g.drawString("Upcoming Piece", (w - offset) / 2, 50);
 		drawUpcomingPiece(g);
-
-		int widthScore = g.getFontMetrics().stringWidth("Score");
-		int widthActualScore = g.getFontMetrics().stringWidth("" + score);
 		
-		int widthHighScore = g.getFontMetrics().stringWidth("High Score");
-		int widthActualHighScore = g.getFontMetrics().stringWidth("" + score);
-
 		g.setColor(Color.BLACK);
-		g.drawString("Score", (w - widthScore) / 2, y + 250);
-		g.drawString("" + score, (w - widthActualScore) / 2, y + 270);
-		g.drawString("High Score", (w - widthHighScore) / 2, y + 310);
-		g.drawString("" + highScore, (w - widthActualHighScore) / 2, y + 330);
+		offset = g.getFontMetrics().stringWidth("Score");
+		g.drawString("Score", (w - offset) / 2, 230);
+		offset = g.getFontMetrics().stringWidth("" + score);
+		g.drawString("" + score, (w - offset) / 2, 250);
 		
-		int levelWidth = g.getFontMetrics().stringWidth("Level");
-		int actualLevelWidth = g.getFontMetrics().stringWidth("" + level);
-		g.drawString("Level" , (w - levelWidth) / 2, y + 370);
-		g.drawString("" + level , (w - actualLevelWidth) / 2, y + 390);
+		offset = g.getFontMetrics().stringWidth("High Score");
+		g.drawString("High Score", (w - offset) / 2, 290);
+		offset = g.getFontMetrics().stringWidth("" + highScore);
+		g.drawString("" + highScore, (w - offset) / 2, 310);
+		
+		offset = g.getFontMetrics().stringWidth("Level");
+		g.drawString("Level", (w - offset) / 2, 350);
+		offset = g.getFontMetrics().stringWidth("" + level);
+		g.drawString("" + level, (w - offset) / 2, 370);
 	}
 
 	public void drawUpcomingPiece (Graphics g)
@@ -127,7 +122,7 @@ public class GameSideBar extends JPanel{
 
 			g.setColor(nextTetrimino.colors[nextTetrimino.pieceNum]);
 
-			nextTetrimino.drawCurrent(g, Tile, centerX, 50);
+			nextTetrimino.drawCurrent(g, Tile, centerX, 70);
 
 		}
 	}
@@ -136,6 +131,11 @@ public class GameSideBar extends JPanel{
 		this.score = score;
 		if(score>highScore)
 			setHighScore(score);
+		repaint();
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
 		repaint();
 	}
 

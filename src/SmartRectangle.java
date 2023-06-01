@@ -23,8 +23,6 @@ public class SmartRectangle {
 		this.colors = colors;
 		this.msg = msg;
 		this.font = font;
-
-
 	}
 
 	public void draw (Graphics g)
@@ -56,16 +54,15 @@ public class SmartRectangle {
 
 	public boolean isMouseInside (int mX, int mY)
 	{
-	
 		int minX = x - edgeLength - padding;
 		int maxX = minX + w + 2 * (edgeLength + padding);
 		int minY = y - edgeLength - padding;
 		int maxY = minY + h + 2 * (edgeLength + padding);
-		
+
 		System.out.println(minX + " " + maxX);
 		System.out.println(minY + " " + maxY);
 		System.out.println("******************");
-		
+
 		return mX >= minX && mX <= maxX && mY >= minY && mY <= maxY;
 	}
 }

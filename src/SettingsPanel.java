@@ -33,8 +33,7 @@ public class SettingsPanel extends JPanel {
 			
 			if (backButton.isMouseInside(mX, mY))
 			{
-				System.out.println("clicked");
-				getRootPane().remove(thisPanel);
+				System.out.println(thisPanel.getRootPane());
 				
 				//getRootPane().setFocusable(false);
 				//returnToMain();

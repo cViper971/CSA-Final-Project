@@ -23,13 +23,17 @@ public class GamePanel extends JPanel{
 	public GameSideBar sb;
 
 	public long score;
+	public int level = 1;
+	public int totalLines;
 
 	public BufferedImage Tile;
 	public Timer t;
 	
 	public int amountTicks = 0;
-	public int movementTickDelay = 80;
+	public int movementDelay = 80;
+	public int movementTickDelay = movementDelay;
 	public int animationTickDelay = 5;
+	
 	public Cell[] animationBlocks = new Cell[8];
 	public boolean breakAnimationStart = false;
 	public int lowestIndex = 0;
@@ -125,7 +129,7 @@ public class GamePanel extends JPanel{
 		public void keyReleased(KeyEvent e) {
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				movementTickDelay = 80;
+				movementTickDelay = movementDelay;
 		}
 	}
 
@@ -166,15 +170,14 @@ public class GamePanel extends JPanel{
 				
 				relIndex += 2;
 			}
-			
-			
-			if (lines > 0)
-			{
-				breakAnimationStart = true;
-			}
-			
 		}
+		if (lines > 0)
+		{
+			breakAnimationStart = true;
+			totalLines+=lines;
+			updateLevel();
 		}
+	}
 
 		
 		switch(lines) {
@@ -264,8 +267,6 @@ public class GamePanel extends JPanel{
 				{
 					moveRow(row);
 					row += 1;
-					
-					System.out.println();
 				}
 			}
 			
@@ -389,8 +390,18 @@ public class GamePanel extends JPanel{
 	}
 
 	public void updateScore(int change) {
-		score+=change;
+		score+=change*level;
 		sb.setScore(score);
+	}
+	
+	public void updateLevel() {
+		System.out.println(totalLines);
+		level = totalLines/1+1;
+		if(level>10)
+			level=10;
+		movementDelay = (int)(80*Math.pow(0.75785828325, level)); //multiplier so last level has tick of 5
+		movementTickDelay = movementDelay;
+		sb.setLevel(level);
 	}
 
 	public int currX(int i) {
@@ -439,6 +450,7 @@ public class GamePanel extends JPanel{
 	
 				}
 			}
+			
 			
 			amountTicks+= 1;
 			
