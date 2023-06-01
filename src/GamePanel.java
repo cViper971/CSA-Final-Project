@@ -455,7 +455,7 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void updateLevel() {
-		level = totalLines*3+1;
+		level = totalLines/10+1;
 		if(level>10)
 			level=10;
 		movementDelay = (int)(80*Math.pow(0.77785828325, level)); //multiplier so last level has tick of 6
