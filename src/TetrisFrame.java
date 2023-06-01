@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.MouseInfo;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -20,15 +22,18 @@ import javax.swing.SwingUtilities;
 public class TetrisFrame extends JFrame {
 	
 	private MainMenu main;
-	private GameSideBar sideBar;
-	private GamePanel panel;
+	private GameSideBar sideBar, sideBar2;
+	private GamePanel panel, panel2;
 	private JPanel container;
+	private SettingsPanel page;
+	private Clip goatTetrisTheme;
 	
 	/*
 		
 		0: MainMenu
-		1: Game
-		2: 
+		1: Single Player Game
+		2: Settings
+		3: Two Player Game
 	*/
 	private int panelNum;
 	
@@ -37,7 +42,7 @@ public class TetrisFrame extends JFrame {
 	{
 		super(window);
 		
-		playMusic();
+		
 		panelNum = 0;
 		setPreferredSize(new Dimension(Properties.mainWindowWidth + 16, Properties.mainWindowHeight + Properties.blockSize + 9));
 		
@@ -61,14 +66,19 @@ public class TetrisFrame extends JFrame {
 		File music = new File("Sounds/music.wav");
 		try {
 			AudioInputStream audioInput = AudioSystem.getAudioInputStream(music);
-			Clip clip = AudioSystem.getClip();
-			clip.open(audioInput);
-			clip.start();
-			clip.loop(Clip.LOOP_CONTINUOUSLY);
+			goatTetrisTheme = AudioSystem.getClip();
+			goatTetrisTheme.open(audioInput);
+			goatTetrisTheme.start();
+			goatTetrisTheme.loop(Clip.LOOP_CONTINUOUSLY);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void stopMusic ()
+	{
+		goatTetrisTheme.stop();
 	}
 	
 	private class ClickListener implements MouseListener {
@@ -88,6 +98,7 @@ public class TetrisFrame extends JFrame {
 					getContentPane().setFocusable(false);
 					initalizeGame();
 					getContentPane().revalidate();
+					playMusic();
 					
 					panelNum = 1;
 			        
@@ -103,7 +114,21 @@ public class TetrisFrame extends JFrame {
 					
 					panelNum = 2;
 				}
+				
+				if (main.twoPlay.isMouseInside(mX, mY))
+				{
+					getContentPane().remove(main);
+					
+					getContentPane().setFocusable(false);
+					initalizeTwoGame();
+					getContentPane().revalidate();
+					playMusic();
+					
+					panelNum = 3;
+				}
 			}
+			
+			
 			if (panelNum == 1&&panel.gameOver==true)
 			{
 				int mX = MouseInfo.getPointerInfo().getLocation().x - panel.getLocationOnScreen().x;
@@ -116,14 +141,66 @@ public class TetrisFrame extends JFrame {
 					getContentPane().setFocusable(false);
 					initalizeGame();
 					getContentPane().revalidate();
+					panelNum = 1;
 				}
 				if (panel.playNo.isMouseInside(mX, mY))
 				{
-					getContentPane().remove(panel);
+					stopMusic();
+					getContentPane().removeAll();
 					
 					getContentPane().setFocusable(false);
 					getContentPane().add(main);
 					getContentPane().revalidate();
+					getContentPane().repaint();
+					panelNum = 0;
+				}
+			}
+			
+			if (panelNum == 2)
+			{
+				int mX = MouseInfo.getPointerInfo().getLocation().x - page.getLocationOnScreen().x;
+				int mY = MouseInfo.getPointerInfo().getLocation().y - page.getLocationOnScreen().y;
+				
+				if (page.backButton.isMouseInside(mX, mY))
+				{
+					getContentPane().removeAll();
+					
+					getContentPane().add(main);
+					getContentPane().revalidate();
+					getContentPane().repaint();
+					
+					panelNum = 0;
+				}
+			}
+			
+			if (panelNum == 3)
+			{
+				int mX1 = MouseInfo.getPointerInfo().getLocation().x - panel.getLocationOnScreen().x;
+				int mY1 = MouseInfo.getPointerInfo().getLocation().y - panel.getLocationOnScreen().y;
+				
+				int mX2 = MouseInfo.getPointerInfo().getLocation().x - panel2.getLocationOnScreen().x;
+				int mY2 = MouseInfo.getPointerInfo().getLocation().y - panel2.getLocationOnScreen().y;
+				
+				
+				if (panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2) )
+				{
+					getContentPane().removeAll();
+					
+					getContentPane().setFocusable(false);
+					initalizeTwoGame();
+					getContentPane().revalidate();
+					panelNum = 3;
+				}
+				if (panel.playNo.isMouseInside(mX1, mY1) || panel2.playNo.isMouseInside(mX2, mY2) )
+				{
+					stopMusic();
+					getContentPane().removeAll();
+					
+					getContentPane().setFocusable(false);
+					getContentPane().add(main);
+					getContentPane().revalidate();
+					getContentPane().repaint();
+					panelNum = 0;
 				}
 			}
 		}
@@ -163,7 +240,8 @@ public class TetrisFrame extends JFrame {
 		sideBar.setPreferredSize(new Dimension(width, height));
         sideBar.setBounds(Properties.blockSize*Properties.gridWidth, 0, Properties.mainWindowWidth, Properties.blockSize*Properties.gridLength);
         
-		panel = new GamePanel(sideBar);
+        
+		panel = new GamePanel(sideBar, true, false, Properties.darkMode, Properties.colorOutlines);
 		
 //		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
@@ -192,9 +270,151 @@ public class TetrisFrame extends JFrame {
         
 	}
 	
+	public void initalizeTwoGame ()
+	{
+		int width = Properties.mainWindowWidth / 2 - Properties.blockSize*Properties.gridWidth / 2;
+        int height = Properties.blockSize*Properties.gridLength / 2;
+        
+		sideBar = new GameSideBar(width, height);
+		sideBar.setPreferredSize(new Dimension(width, height));
+        sideBar.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth / 2, Properties.blockSize*Properties.gridLength);
+        
+        sideBar2 = new GameSideBar(width, height);
+		sideBar2.setPreferredSize(new Dimension(width, height));
+        sideBar2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth, Properties.blockSize*Properties.gridLength);
+        
+		panel = new GamePanel(sideBar, false, true, Properties.darkMode, Properties.colorOutlines);
+		panel2 = new GamePanel(sideBar2, true, true, Properties.darkMode, Properties.colorOutlines);
+		
+//		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
+		SwingUtilities.invokeLater(new Runnable () {
+			@Override
+			public void run() {
+				//panel.requestFocus(true);
+				panel.setBackground(Color.BLACK);
+		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.blockSize*Properties.gridLength));
+		        panel.setBounds(0, 0, Properties.blockSize*Properties.gridWidth / 2, Properties.blockSize*Properties.gridLength);
+		        
+				//panel2.requestFocus(true);
+				panel2.setBackground(Color.BLACK);
+		        panel2.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.blockSize*Properties.gridLength));
+		        panel2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.blockSize*Properties.gridWidth, Properties.blockSize*Properties.gridLength);
+		        
+		        
+				
+			}
+		});
+		 
+        container = new JPanel();
+        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+        
+        container.add(panel);
+        container.add(sideBar);
+        container.add(panel2);
+        container.add(sideBar2);
+        getContentPane().add(container);
+        
+        Keyboard joined = new Keyboard();
+        joined.panel1 = panel;
+        joined.panel2 = panel2;
+        
+        addKeyListener(joined);
+       
+        container.repaint();
+	}
+	
+	private class Keyboard implements KeyListener {
+		
+		public GamePanel panel1;
+		public GamePanel panel2;
+		
+		@Override
+		public void keyTyped(KeyEvent e) {
+			// TODO Auto-generated method stub
+		}
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if(!panel1.gameOver)
+			{
+				// TODO Auto-generated method stub
+				if(e.getKeyCode()==panel1.leftKey)
+					if(panel1.canMove(panel1.currT.x-1,panel1.currT.y))
+						panel1.currT.setX(panel1.currT.getX()-1);
+				if(e.getKeyCode()==panel1.rightKey)
+					if(panel1.canMove(panel1.currT.x+1,panel1.currT.y))
+						panel1.currT.setX(panel1.currT.getX()+1);
+				if(e.getKeyCode()==panel1.rotateKey)
+				{
+					if (panel1.canRotate(false))
+					{
+						panel1.currT.rotateRight();
+					}
+				}
+
+				if(e.getKeyCode()==panel1.softKey) {
+//					if (canRotate(true))
+//					{
+//						currT.rotateLeft();
+//					}
+					panel1.movementTickDelay = 5;
+					
+					
+				}
+				if(e.getKeyCode()==panel1.hardKey) {
+					panel1.updateScore(2*panel1.currT.drop(panel1.board));
+					panel1.updateGrid();
+					panel1.checkLines();
+				}
+			}
+			
+			if (!panel2.gameOver)
+			{
+				// TODO Auto-generated method stub
+				if(e.getKeyCode()==panel2.leftKey)
+					if(panel2.canMove(panel2.currT.x-1,panel2.currT.y))
+						panel2.currT.setX(panel2.currT.getX()-1);
+				if(e.getKeyCode()==panel2.rightKey)
+					if(panel2.canMove(panel2.currT.x+1,panel2.currT.y))
+						panel2.currT.setX(panel2.currT.getX()+1);
+				if(e.getKeyCode()==panel2.rotateKey)
+				{
+					if (panel2.canRotate(false))
+					{
+						panel2.currT.rotateRight();
+					}
+				}
+
+				if(e.getKeyCode()==panel2.softKey) {
+//					if (canRotate(true))
+//					{
+//						currT.rotateLeft();
+//					}
+					panel1.movementTickDelay = 5;
+					
+					
+				}
+				if(e.getKeyCode()==panel2.hardKey) {
+					panel2.updateScore(2*panel2.currT.drop(panel2.board));
+					panel2.updateGrid();
+					panel2.checkLines();
+				}
+			}
+				
+			
+			panel1.repaint();
+			panel2.repaint();
+		}
+		@Override
+		public void keyReleased(KeyEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
 	public void loadSettings() {
-		SettingsPanel page = new SettingsPanel();
+		page = new SettingsPanel();
 		getContentPane().add(page);
 		
 	}
+
 }

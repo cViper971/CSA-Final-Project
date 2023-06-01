@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
@@ -16,12 +18,14 @@ public class MainMenu extends JPanel {
 	
 		Settings = new SmartRectangle(Properties.mainWindowWidth - 115, 17, 100, 20, 5, 10, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "Settings", new Font("Monospace", Font.PLAIN, 32));
 		singlePlay = new SmartRectangle((Properties.mainWindowWidth - 250) / 2, y + 200, 250, 30, 5, 10, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "Single Player", new Font("Monospace", Font.PLAIN, 40));
-		twoPlay = new SmartRectangle((Properties.mainWindowWidth - 250) / 2, y + 300, 250, 30, 5, 10, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "Two Play", new Font("Monospace", Font.PLAIN, 40));
+		twoPlay = new SmartRectangle((Properties.mainWindowWidth - 250) / 2, y + 300, 250, 30, 5, 10, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "Two Player", new Font("Monospace", Font.PLAIN, 40));
 	}
 
 	public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		g.setColor(Color.RED);
 		g.setFont(new Font ("Monospace", Font.BOLD, 50));

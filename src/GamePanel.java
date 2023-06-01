@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -44,17 +45,49 @@ public class GamePanel extends JPanel{
 	
 	public boolean gameOver = false;
 	public SmartRectangle playYes, playNo;
+	public int leftKey, rightKey, rotateKey, softKey, hardKey;
+	public int gridWidth = Properties.gridWidth;
 	
+	public boolean darkMode, outlines;
 
 
 	boolean grounded = false;
-	public GamePanel(GameSideBar sideBar){
-		board = new Cell[Properties.gridLength][Properties.gridWidth];
+	public GamePanel(GameSideBar sideBar, boolean isPlayer1, boolean isTwoPlayer, boolean darkMode, boolean outlines){
+		
+		if (isPlayer1)
+		{
+			this.leftKey = Properties.player1Left;
+			this.rightKey = Properties.player1Right;
+			this.rotateKey = Properties.player1Rotate;
+			this.softKey = Properties.player1Soft;
+			this.hardKey = Properties.player1Hard;
+		} else {
+			this.leftKey = Properties.player2Left;
+			this.rightKey = Properties.player2Right;
+			this.rotateKey = Properties.player2Rotate;
+			this.softKey = Properties.player2Soft;
+			this.hardKey = Properties.player2Hard;
+		}
+		
+		this.darkMode = darkMode;
+		this.outlines = outlines;
+		
+		if (isTwoPlayer)
+		{
+			gridWidth /= 2;
+		}
+		
+		board = new Cell[Properties.gridLength][gridWidth];
 		for(int i=0;i<Properties.gridLength;i++) {
-			for(int j=0;j<Properties.gridWidth;j++) {
-				board[i][j] = new Cell(j,i);
+			for(int j=0;j<gridWidth;j++) {
+				
+				board[i][j] = new Cell(j,i, darkMode, false);
+				
 			}
 		}
+		
+		System.out.println(gridWidth);
+		
 		Tile = null;
 		try {
 			Tile = ImageIO.read(new File(Properties.img));
@@ -66,16 +99,22 @@ public class GamePanel extends JPanel{
 		sb = sideBar;
 		t = new Timer(Properties.tick,new timey());
 		t.start();
-
-		addKeyListener(new keyboard());
+		
+		if (!isTwoPlayer)
+		{
+			addKeyListener(new keyboard());
+		}
+		
 		
 		// Just a reminder that this will not necessarily work for some all board dimensions (such as 4 by 4) as some blocks are positioned with their coordinates starting way to the left. 
-		currT = new Tetrimino(Properties.gridWidth/2, 1);
-		nextT = new Tetrimino(Properties.gridWidth/2, 1);
+		currT = new Tetrimino(gridWidth/2, 1);
+		nextT = new Tetrimino(gridWidth/2, 1);
 		sb.setNext(nextT);
 		
-		playYes = new SmartRectangle((Properties.gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 15));
-		playNo = new SmartRectangle((Properties.gridWidth*Properties.blockSize)/2+20, (Properties.gridLength*Properties.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 15));
+		playYes = new SmartRectangle((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 25));
+		playNo = new SmartRectangle((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 25));
+	
+		
 	}
 
 	public void paintComponent(Graphics g) {
@@ -92,10 +131,19 @@ public class GamePanel extends JPanel{
 		}
 		
 		if(gameOver) {
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+			
 			g.setColor(Color.RED);
 			g.setFont(new Font ("Monospace", Font.BOLD, 50));
 			int offset = g.getFontMetrics().stringWidth("GAME OVER");
 			g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2);
+			
+			g.setColor(Color.GREEN);
+			g.setFont(new Font ("Monospace", Font.BOLD, 25));
+			
+			int offsetSmall = g.getFontMetrics().stringWidth("Play Again?");
+			g.drawString("Play Again?", (this.getWidth() - offsetSmall) / 2, this.getHeight()/2 + 20);
 			playYes.draw(g);
 			playNo.draw(g);
 		}
@@ -111,13 +159,13 @@ public class GamePanel extends JPanel{
 			if(gameOver)
 				return;
 			// TODO Auto-generated method stub
-			if(e.getKeyCode()==KeyEvent.VK_LEFT)
+			if(e.getKeyCode()==leftKey)
 				if(canMove(currT.x-1,currT.y))
 					currT.setX(currT.getX()-1);
-			if(e.getKeyCode()==KeyEvent.VK_RIGHT)
+			if(e.getKeyCode()==rightKey)
 				if(canMove(currT.x+1,currT.y))
 					currT.setX(currT.getX()+1);
-			if(e.getKeyCode()==KeyEvent.VK_UP)
+			if(e.getKeyCode()==rotateKey)
 			{
 				if (canRotate(false))
 				{
@@ -125,7 +173,7 @@ public class GamePanel extends JPanel{
 				}
 			}
 
-			if(e.getKeyCode()==KeyEvent.VK_DOWN) {
+			if(e.getKeyCode()==softKey) {
 //				if (canRotate(true))
 //				{
 //					currT.rotateLeft();
@@ -134,7 +182,7 @@ public class GamePanel extends JPanel{
 				
 				
 			}
-			if(e.getKeyCode()==KeyEvent.VK_SPACE) {
+			if(e.getKeyCode()==hardKey) {
 				updateScore(2*currT.drop(board));
 				updateGrid();
 				checkLines();
@@ -178,11 +226,11 @@ public class GamePanel extends JPanel{
 				
 				if (board.length % 2 == 0)
 				{
-					animationBlocks[relIndex] = getCell(Properties.gridWidth / 2, i).copyCell();
-					animationBlocks[relIndex + 1] = getCell(Properties.gridWidth / 2 - 1, i).copyCell();
+					animationBlocks[relIndex] = getCell(gridWidth / 2, i).copyCell();
+					animationBlocks[relIndex + 1] = getCell(gridWidth / 2 - 1, i).copyCell();
 				} else {
-					animationBlocks[relIndex] = getCell(Properties.gridWidth / 2, i).copyCell();
-					animationBlocks[relIndex + 1] = getCell(Properties.gridWidth / 2, i).copyCell();
+					animationBlocks[relIndex] = getCell(gridWidth / 2, i).copyCell();
+					animationBlocks[relIndex + 1] = getCell(gridWidth / 2, i).copyCell();
 				}
 				
 				
@@ -228,7 +276,7 @@ public class GamePanel extends JPanel{
 					
 					if (leftBlock != null && rightBlock != null)
 					{
-						if (rightBlock.x <= Properties.gridWidth - 1 && leftBlock.x >= 0)
+						if (rightBlock.x <= gridWidth - 1 && leftBlock.x >= 0)
 						{
 							animationBlocks[i] = new Cell(rightBlock.x + 1, rightBlock.y);
 							animationBlocks[i + 1] = new Cell(leftBlock.x - 1, leftBlock.y);
@@ -266,10 +314,15 @@ public class GamePanel extends JPanel{
 			{
 				int y = animationBlocks[i].y;
 				
-				for (int j = 0; j < Properties.gridWidth; j++)
+				for (int j = 0; j < gridWidth; j++)
 				{
+					if (darkMode)
+					{
+						setCell(j, y, Color.BLACK, false);
+					} else {
+						setCell(j, y, Color.WHITE, false);
+					}
 					
-					setCell(j, y, Color.BLACK, false);
 				}
 			}
 			
@@ -293,12 +346,18 @@ public class GamePanel extends JPanel{
 	
 	public void moveRow (int row)
 	{
-		for (int i = 0; i < Properties.gridWidth; i++)
+		for (int i = 0; i < gridWidth; i++)
 		{
 			Cell currentCell = getCell(i, row);
 			setCell(i, row + 1, currentCell.c, currentCell.occupied);
 			
-			setCell(i, row, Color.BLACK, false);
+			if (darkMode)
+			{
+				setCell(i, row, Color.BLACK, false);
+			} else {
+				setCell(i, row, Color.WHITE, false);
+			}
+			
 		}
 	}
 	
@@ -312,7 +371,7 @@ public class GamePanel extends JPanel{
 		boolean isOccupied = false;
 		boolean isBelowOccupied = false;
 		
-		for (int j = 0; j < Properties.gridWidth; j++)
+		for (int j = 0; j < gridWidth; j++)
 		{
 			if (getCell(j, row).isOccupied())
 			{
@@ -371,7 +430,7 @@ public class GamePanel extends JPanel{
 	}
 
 	public boolean isOpen(int x,int y) {
-		if(x>Properties.gridWidth-1||x<0)
+		if(x>gridWidth-1||x<0)
 			return false;
 		if(y>Properties.gridLength-1||y<0)
 			return false;
@@ -410,7 +469,7 @@ public class GamePanel extends JPanel{
 		}
 		playSound("drop.wav");
 		currT = nextT;
-		nextT = new Tetrimino(Properties.gridWidth/2,0);
+		nextT = new Tetrimino(gridWidth/2,0);
 		sb.setNext(nextT);
 
 		for(int i=0;i<4;i++) {
