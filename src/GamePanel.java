@@ -440,7 +440,6 @@ public class GamePanel extends JPanel{
 				}
 			}
 			
-			
 			amountTicks+= 1;
 			
 			animateBlockBreak();

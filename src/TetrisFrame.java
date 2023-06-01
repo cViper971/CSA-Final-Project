@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -28,7 +29,7 @@ public class TetrisFrame extends JFrame {
 	{
 		super(window);
 		panelNum = 0;
-		setSize(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + Constants.blockSize + 9);
+		setPreferredSize(new Dimension(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + Constants.blockSize + 9));
 		
         if (testingMode)
         {
@@ -39,7 +40,8 @@ public class TetrisFrame extends JFrame {
         	getContentPane().add(main);
         	addMouseListener(new ClickListener());
         }
-
+        pack();
+        
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
@@ -54,11 +56,12 @@ public class TetrisFrame extends JFrame {
 			{
 				return;
 			}
+
+			int mX = MouseInfo.getPointerInfo().getLocation().x - main.getLocationOnScreen().x;
+			int mY = MouseInfo.getPointerInfo().getLocation().y - main.getLocationOnScreen().y;
 			
-			
-			
-			int mX = e.getX();
-			int mY = e.getY();
+			System.out.println(mX + " " + mY);
+			//System.out.println(main.getLocation().x + " " + main.getLocation().y);
 			
 			if (main.Play.isMouseInside(mX, mY))
 			{
@@ -80,7 +83,7 @@ public class TetrisFrame extends JFrame {
 				loadSettings();
 				getContentPane().revalidate();
 				
-				panelNum = 1;
+				panelNum = 2;
 		        
 			}
 		}
@@ -152,6 +155,8 @@ public class TetrisFrame extends JFrame {
 	public void loadSettings() {
 		SettingsPanel page = new SettingsPanel();
 		getContentPane().add(page);
+		
+		System.out.println("Settings: " + page.getLocationOnScreen().x + " " + page.getLocationOnScreen().y);
 		
 	}
 }

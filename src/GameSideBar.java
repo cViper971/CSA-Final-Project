@@ -24,6 +24,7 @@ public class GameSideBar extends JPanel{
 	private int w, h;
 	private long score;
 	private long highScore;
+	private int level;
 	private BufferedImage Tile;
 	private Scanner sc;
 	private PrintWriter pw;
@@ -48,12 +49,30 @@ public class GameSideBar extends JPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		highScore = sc.nextLong();
+		
+		try {
+			pw = new PrintWriter(new File("highScore.txt"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			highScore = sc.nextLong();
+		} catch (Exception e) {
+			pw.write("0");
+			highScore = 0;
+			pw.close();
+		}
+		
+		
 	}
 
 	public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);
+		
+		int y = 0;
 
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -62,18 +81,26 @@ public class GameSideBar extends JPanel{
 		g.setFont(new Font ("Monospace", Font.BOLD, 20));
 
 		int widthUpcoming = g.getFontMetrics().stringWidth("Upcoming Piece");
-		g.drawString("Upcoming Piece", (w - widthUpcoming) / 2, 30);
+		g.drawString("Upcoming Piece", (w - widthUpcoming) / 2, y + 30);
 
 		drawUpcomingPiece(g);
 
 		int widthScore = g.getFontMetrics().stringWidth("Score");
 		int widthActualScore = g.getFontMetrics().stringWidth("" + score);
+		
+		int widthHighScore = g.getFontMetrics().stringWidth("High Score");
+		int widthActualHighScore = g.getFontMetrics().stringWidth("" + score);
 
 		g.setColor(Color.BLACK);
-		g.drawString("Score", (w - widthScore) / 2, 250);
-		g.drawString("" + score, (w - widthActualScore) / 2, 270);
-		g.drawString("High Score", (w - widthScore) / 2, 310);
-		g.drawString("" + highScore, (w - widthActualScore) / 2, 330);
+		g.drawString("Score", (w - widthScore) / 2, y + 250);
+		g.drawString("" + score, (w - widthActualScore) / 2, y + 270);
+		g.drawString("High Score", (w - widthHighScore) / 2, y + 310);
+		g.drawString("" + highScore, (w - widthActualHighScore) / 2, y + 330);
+		
+		int levelWidth = g.getFontMetrics().stringWidth("Level");
+		int actualLevelWidth = g.getFontMetrics().stringWidth("" + level);
+		g.drawString("Level" , (w - levelWidth) / 2, y + 370);
+		g.drawString("" + level , (w - actualLevelWidth) / 2, y + 390);
 	}
 
 	public void drawUpcomingPiece (Graphics g)
@@ -118,12 +145,6 @@ public class GameSideBar extends JPanel{
 
 	public void saveHighScore() {
 		sc.close();
-		try {
-			pw = new PrintWriter(new File("highScore.txt"));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		pw.write(""+highScore);
 		pw.close();
 	}

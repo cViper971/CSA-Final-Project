@@ -56,6 +56,16 @@ public class SmartRectangle {
 
 	public boolean isMouseInside (int mX, int mY)
 	{
-		return mX >= x && mX <= x + w && mY >= y && mY <= y + w;
+	
+		int minX = x - edgeLength - padding;
+		int maxX = minX + w + 2 * (edgeLength + padding);
+		int minY = y - edgeLength - padding;
+		int maxY = minY + h + 2 * (edgeLength + padding);
+		
+		System.out.println(minX + " " + maxX);
+		System.out.println(minY + " " + maxY);
+		System.out.println("******************");
+		
+		return mX >= minX && mX <= maxX && mY >= minY && mY <= maxY;
 	}
 }
