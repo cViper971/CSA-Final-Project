@@ -20,7 +20,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class SettingsPanel extends JPanel {
-	SmartRectangle backButton;
+	Button backButton;
 	SettingsPanel thisPanel = this;
 	
 	private int startX = 10;
@@ -35,14 +35,11 @@ public class SettingsPanel extends JPanel {
 		
 		// Absolute Positioning: https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html
 		setLayout(null);
-		backButton = new SmartRectangle(Properties.mainWindowWidth / 2 - 10, startY + spacing * 10, 20, 20, 2, 10, new Color[] {Color.BLACK, Color.RED, Color.BLACK}, "X", new Font("Monospace", Font.PLAIN, 32));
-		//Gamemode = new SmartRectangle((Constants.mainWindowWidth - 150) / 2, y + 100, 150, 20, 5, 10, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "Gamemode", new Font("Monospace", Font.PLAIN, 32));
-		//Instructions = new SmartRectangle((Constants.mainWindowWidth - 150) / 2, y + 200, 150, 20, 5, 10, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "How to Play", new Font("Monospace", Font.PLAIN, 32));
-		//Play = new SmartRectangle((Constants.mainWindowWidth - 100) / 2, y + 300, 100, 20, 5, 10, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "Play", new Font("Monospace", Font.PLAIN, 32));
-		//setFocusable(true);
+		backButton = new Button(Properties.mainWindowWidth / 2 - 10, startY + spacing * 10, 20, 20, 2, 10, new Color[] {Color.BLACK, Color.RED, Color.BLACK}, "X", new Font("Monospace", Font.PLAIN, 32));
 		setFocusable(true);
 		
 		// https://www.javatpoint.com/java-jradiobutton
+		
 		
 		int x = Properties.mainWindowWidth;
 		int width = 150;
@@ -52,25 +49,20 @@ public class SettingsPanel extends JPanel {
 		
 		JCheckBox outlines = new JCheckBox();
 		outlines.setSelected(Properties.colorOutlines);
-		
 		JCheckBox darkMode = new JCheckBox();
 		darkMode.setSelected(Properties.darkMode);
 		
 		addCheckBox(outlines, (x - width) / 2, startY - 15, width, 15, f);
 		addCheckBox(darkMode, (x - width) / 2, startY + spacing - 15, width, 15, f);
 		
-		
 		outlines.addChangeListener(new ChangeListener() {
-
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Properties.colorOutlines = outlines.isSelected();
-				
 			}
 		});
 		
 		darkMode.addChangeListener(new ChangeListener() {
-
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Properties.darkMode = darkMode.isSelected();
@@ -81,30 +73,16 @@ public class SettingsPanel extends JPanel {
 		add(outlines);
 		add(darkMode);
 		
-		/*
-		JTextField player1Left = new JTextField();
-		JTextField player1Right = new JTextField();
-		JTextField player1Rotate = new JTextField();
-		JTextField player1Soft = new JTextField();
-		JTextField player1Hard = new JTextField();
-		
-		JTextField player2Left = new JTextField();
-		JTextField player2Right = new JTextField();
-		JTextField player2Rotate = new JTextField();
-		JTextField player2Soft = new JTextField();
-		JTextField player2Hard = new JTextField();
-		*/
-		
 		int textWidth = 115;
-		
+
 		int relIndex = 5;
-		
+
 		for (int i = 0; i < 10; i++)
 		{
 			String keyName = KeyEvent.getKeyText(getKeyCodeFromVariable(i));
-			
+
 			JTextField option = new JTextField(keyName);
-			
+
 			if (i < 5)
 			{
 				addTextField(option, startX + 200, startY + spacing * relIndex - 23, textWidth, 30, f, i);
@@ -115,52 +93,14 @@ public class SettingsPanel extends JPanel {
 				}
 				addTextField(option, startX + 575, startY + spacing * relIndex - 23, textWidth, 30, f, i);
 			}
-			
+
 			System.out.println(relIndex);
-			
+
 			add(option);
 			relIndex += 1;
-			
-			
-		}
-		
-		/*
-		addTextField(player1Left, startX + 200, startY + spacing * 5 - 23, textWidth, 30, f, 0);
-		addTextField(player1Right, startX + 200, startY + spacing * 6 - 23, textWidth, 30, f, 1);
-		addTextField(player1Rotate, startX + 200, startY + spacing * 7 - 23, textWidth, 30, f, 2);
-		addTextField(player1Soft, startX + 200, startY + spacing * 8 - 23, textWidth, 30, f, 3);
-		addTextField(player1Hard, startX + 200, startY + spacing * 9 - 23, textWidth, 30, f, 4);
-		
-		addTextField(player2Left, startX + 575, startY + spacing * 5 - 23, textWidth, 30, f, 5);
-		addTextField(player2Right, startX + 575, startY + spacing * 6 - 23, textWidth, 30, f, 6);
-		addTextField(player2Rotate, startX + 575, startY + spacing * 7 - 23, textWidth, 30, f);
-		addTextField(player2Soft, startX + 575, startY + spacing * 8 - 23, textWidth, 30, f);
-		addTextField(player2Hard, startX + 575, startY + spacing * 9 - 23, textWidth, 30, f);
-		
-		add(player1Left);
-		add(player1Right);
-		add(player1Rotate);
-		add(player1Soft);
-		add(player1Hard);
-		
-		add(player2Left);
-		add(player2Right);
-		add(player2Rotate);
-		add(player2Soft);
-		add(player2Hard);
-		
-		*/
-		
-		/*
-		player1Left.addChangeListener(new ChangeListener() {
 
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Properties.colorOutlines = outlines.isSelected();
-				
-			}
-		});
-		*/
+
+		}
 		
 		setVisible(true);
 	}
@@ -172,11 +112,11 @@ public class SettingsPanel extends JPanel {
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		g.setColor(Color.BLACK);
-		
+
 		Font fTitle = new Font("Monospace", Font.PLAIN, 32);
 		g.setFont(fTitle);
 		int titleWidth = g.getFontMetrics().stringWidth("Settings");
-		
+
 		g.drawString("Settings", (Properties.mainWindowWidth - titleWidth) / 2, 40);
 		
 		Font f = new Font("Monospace", Font.PLAIN, 20);
@@ -341,11 +281,4 @@ public class SettingsPanel extends JPanel {
 		
 		return -1;
 	}
-	
-	
-	
-	
-	
-	
-	
 }

@@ -14,8 +14,7 @@ public class Cell {
 	public BufferedImage tile;
 	
 	public Cell(int x, int y) {
-		this(x, y, Properties.darkMode, false);
-		 
+		this(x, y, Color.BLACK, false);
 	}
 	
 	public Cell (int x, int y, Color col, boolean occupied)
@@ -32,30 +31,6 @@ public class Cell {
 			e.printStackTrace();
 		}
 	}
-	
-	public Cell (int x, int y, boolean darkMode, boolean occupied)
-	{
-		this.x = x;
-		this.y = y;
-		
-		if (darkMode)
-		{
-			this.c = Color.BLACK;
-		} else {
-			this.c = Color.WHITE;
-		}
-		
-		this.occupied = occupied;
-		
-		try {
-			tile = ImageIO.read(new File(Properties.img));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
 	
 	public void paintCell(Graphics g) {
 		

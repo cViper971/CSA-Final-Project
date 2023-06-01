@@ -44,16 +44,16 @@ public class GamePanel extends JPanel{
 	public int lowestIndex = 0;
 	
 	public boolean gameOver = false;
-	public SmartRectangle playYes, playNo;
-	public int leftKey, rightKey, rotateKey, softKey, hardKey;
-	public int gridWidth = Properties.gridWidth;
+	public Button playYes, playNo;
 	
-	public boolean darkMode, outlines;
+	public int gridWidth = Properties.gridWidth;
+	public int leftKey, rightKey, rotateKey, softKey, hardKey;
+	
 
 
 	boolean grounded = false;
-	public GamePanel(GameSideBar sideBar, boolean isPlayer1, boolean isTwoPlayer, boolean darkMode, boolean outlines){
-		
+	public GamePanel(GameSideBar sideBar, boolean isPlayer1, boolean isTwoPlayer){
+
 		if (isPlayer1)
 		{
 			this.leftKey = Properties.player1Left;
@@ -68,26 +68,18 @@ public class GamePanel extends JPanel{
 			this.softKey = Properties.player2Soft;
 			this.hardKey = Properties.player2Hard;
 		}
-		
-		this.darkMode = darkMode;
-		this.outlines = outlines;
-		
+
 		if (isTwoPlayer)
 		{
 			gridWidth /= 2;
 		}
-		
+
 		board = new Cell[Properties.gridLength][gridWidth];
 		for(int i=0;i<Properties.gridLength;i++) {
 			for(int j=0;j<gridWidth;j++) {
-				
-				board[i][j] = new Cell(j,i, darkMode, false);
-				
+				board[i][j] = new Cell(j,i);
 			}
 		}
-		
-		System.out.println(gridWidth);
-		
 		Tile = null;
 		try {
 			Tile = ImageIO.read(new File(Properties.img));
@@ -99,29 +91,27 @@ public class GamePanel extends JPanel{
 		sb = sideBar;
 		t = new Timer(Properties.tick,new timey());
 		t.start();
-		
+
 		if (!isTwoPlayer)
 		{
 			addKeyListener(new keyboard());
 		}
-		
 		
 		// Just a reminder that this will not necessarily work for some all board dimensions (such as 4 by 4) as some blocks are positioned with their coordinates starting way to the left. 
 		currT = new Tetrimino(gridWidth/2, 1);
 		nextT = new Tetrimino(gridWidth/2, 1);
 		sb.setNext(nextT);
 		
-		playYes = new SmartRectangle((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 25));
-		playNo = new SmartRectangle((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 25));
-	
-		
+		playYes = new Button((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 25));
+		playNo = new Button((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 25));
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		currT.drawCurrent(g, Tile);
-		drawOutline(g);
+		if(Properties.colorOutlines)
+			drawOutline(g);
 		for(Cell[] cells:board)
 		{
 			for(Cell c:cells)
@@ -133,19 +123,21 @@ public class GamePanel extends JPanel{
 		if(gameOver) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-			
+
 			g.setColor(Color.RED);
 			g.setFont(new Font ("Monospace", Font.BOLD, 50));
 			int offset = g.getFontMetrics().stringWidth("GAME OVER");
 			g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2);
-			
+
 			g.setColor(Color.GREEN);
 			g.setFont(new Font ("Monospace", Font.BOLD, 25));
-			
+
 			int offsetSmall = g.getFontMetrics().stringWidth("Play Again?");
 			g.drawString("Play Again?", (this.getWidth() - offsetSmall) / 2, this.getHeight()/2 + 20);
 			playYes.draw(g);
 			playNo.draw(g);
+		}else {
+			
 		}
 	}
 
@@ -166,22 +158,11 @@ public class GamePanel extends JPanel{
 				if(canMove(currT.x+1,currT.y))
 					currT.setX(currT.getX()+1);
 			if(e.getKeyCode()==rotateKey)
-			{
 				if (canRotate(false))
-				{
 					currT.rotateRight();
-				}
-			}
-
-			if(e.getKeyCode()==softKey) {
-//				if (canRotate(true))
-//				{
-//					currT.rotateLeft();
-//				}
+			if(e.getKeyCode()==softKey) 
 				movementTickDelay = 5;
-				
-				
-			}
+	
 			if(e.getKeyCode()==hardKey) {
 				updateScore(2*currT.drop(board));
 				updateGrid();
@@ -315,15 +296,7 @@ public class GamePanel extends JPanel{
 				int y = animationBlocks[i].y;
 				
 				for (int j = 0; j < gridWidth; j++)
-				{
-					if (darkMode)
-					{
-						setCell(j, y, Color.BLACK, false);
-					} else {
-						setCell(j, y, Color.WHITE, false);
-					}
-					
-				}
+					setCell(j, y, Color.BLACK, false);
 			}
 			
 		}
@@ -351,13 +324,7 @@ public class GamePanel extends JPanel{
 			Cell currentCell = getCell(i, row);
 			setCell(i, row + 1, currentCell.c, currentCell.occupied);
 			
-			if (darkMode)
-			{
-				setCell(i, row, Color.BLACK, false);
-			} else {
-				setCell(i, row, Color.WHITE, false);
-			}
-			
+			setCell(i, row, Color.BLACK, false);
 		}
 	}
 	
@@ -488,12 +455,12 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void updateLevel() {
-		System.out.println(totalLines);
-		level = totalLines/1+1;
+		level = totalLines*3+1;
 		if(level>10)
 			level=10;
-		movementDelay = (int)(80*Math.pow(0.75785828325, level)); //multiplier so last level has tick of 5
+		movementDelay = (int)(80*Math.pow(0.77785828325, level)); //multiplier so last level has tick of 6
 		movementTickDelay = movementDelay;
+		System.out.println(movementDelay);
 		sb.setLevel(level);
 	}
 	
