@@ -4,7 +4,14 @@ import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -29,6 +36,8 @@ public class TetrisFrame extends JFrame {
 	public TetrisFrame (String window, boolean testingMode)
 	{
 		super(window);
+		
+		playMusic();
 		panelNum = 0;
 		setPreferredSize(new Dimension(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + Constants.blockSize + 9));
 		
@@ -46,6 +55,20 @@ public class TetrisFrame extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
+	}
+	
+	public void playMusic() {
+		File music = new File("Sounds/music.wav");
+		try {
+			AudioInputStream audioInput = AudioSystem.getAudioInputStream(music);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioInput);
+			clip.start();
+			clip.loop(Clip.LOOP_CONTINUOUSLY);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private class ClickListener implements MouseListener {
@@ -92,6 +115,14 @@ public class TetrisFrame extends JFrame {
 					
 					getContentPane().setFocusable(false);
 					initalizeGame();
+					getContentPane().revalidate();
+				}
+				if (panel.playNo.isMouseInside(mX, mY))
+				{
+					getContentPane().remove(panel);
+					
+					getContentPane().setFocusable(false);
+					getContentPane().add(main);
 					getContentPane().revalidate();
 				}
 			}

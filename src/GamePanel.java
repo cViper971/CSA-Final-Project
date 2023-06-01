@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -105,6 +108,8 @@ public class GamePanel extends JPanel{
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {
+			if(gameOver)
+				return;
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_LEFT)
 				if(canMove(currT.x-1,currT.y))
@@ -138,6 +143,8 @@ public class GamePanel extends JPanel{
 		}
 		@Override
 		public void keyReleased(KeyEvent e) {
+			if(gameOver)
+				return;
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
 				movementTickDelay = movementDelay;
@@ -184,6 +191,7 @@ public class GamePanel extends JPanel{
 		}
 		if (lines > 0)
 		{
+			playSound("lineClear.wav");
 			breakAnimationStart = true;
 			totalLines+=lines;
 			updateLevel();
@@ -211,7 +219,6 @@ public class GamePanel extends JPanel{
 	{
 		if (breakAnimationStart)
 		{
-			//System.out.println(Arrays.toString(animationBlocks));
 			if (amountTicks >= animationTickDelay)
 			{
 				for (int i = 0; i < animationBlocks.length - 1; i+=2)
@@ -372,6 +379,20 @@ public class GamePanel extends JPanel{
 			return false;
 		return true;
 	}
+	
+	public void playSound(String file) {
+		File music = new File("Sounds/"+file);
+		
+		try {
+			AudioInputStream audioInput = AudioSystem.getAudioInputStream(music);
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioInput);
+			clip.start();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void drawOutline(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
@@ -387,6 +408,7 @@ public class GamePanel extends JPanel{
 		for(int i = 0;i<4;i++) {
 			setCell(currX(i),currY(i),currT.color,true);
 		}
+		playSound("drop.wav");
 		currT = nextT;
 		nextT = new Tetrimino(Constants.gridWidth/2,0);
 		sb.setNext(nextT);
@@ -395,6 +417,7 @@ public class GamePanel extends JPanel{
 			if(!isOpen(currX(i),currY(i))) {
 				t.stop();
 				sb.saveHighScore();
+				playSound("gameOver.wav");
 				runGameOver();
 			}
 		}
