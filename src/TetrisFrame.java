@@ -39,7 +39,7 @@ public class TetrisFrame extends JFrame {
 		
 		playMusic();
 		panelNum = 0;
-		setPreferredSize(new Dimension(Constants.mainWindowWidth + 16, Constants.mainWindowHeight + Constants.blockSize + 9));
+		setPreferredSize(new Dimension(Properties.mainWindowWidth + 16, Properties.mainWindowHeight + Properties.blockSize + 9));
 		
         if (testingMode)
         {
@@ -156,12 +156,12 @@ public class TetrisFrame extends JFrame {
 	
 	public void initalizeGame ()
 	{
-		int width = Constants.mainWindowWidth - Constants.blockSize*Constants.gridWidth;
-        int height = Constants.blockSize*Constants.gridLength;
+		int width = Properties.mainWindowWidth - Properties.blockSize*Properties.gridWidth;
+        int height = Properties.blockSize*Properties.gridLength;
         
 		sideBar = new GameSideBar(width, height);
 		sideBar.setPreferredSize(new Dimension(width, height));
-        sideBar.setBounds(Constants.blockSize*Constants.gridWidth, 0, Constants.mainWindowWidth, Constants.blockSize*Constants.gridLength);
+        sideBar.setBounds(Properties.blockSize*Properties.gridWidth, 0, Properties.mainWindowWidth, Properties.blockSize*Properties.gridLength);
         
 		panel = new GamePanel(sideBar);
 		
@@ -173,8 +173,8 @@ public class TetrisFrame extends JFrame {
 				panel.requestFocusInWindow();
 				panel.requestFocus(true);
 				panel.setBackground(Color.BLACK);
-		        panel.setPreferredSize(new Dimension(Constants.blockSize*Constants.gridWidth,Constants.blockSize*Constants.gridLength));
-		        panel.setBounds(0, 0, Constants.blockSize*Constants.gridWidth, Constants.blockSize*Constants.gridLength);
+		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth,Properties.blockSize*Properties.gridLength));
+		        panel.setBounds(0, 0, Properties.blockSize*Properties.gridWidth, Properties.blockSize*Properties.gridLength);
 				
 			}
 		});

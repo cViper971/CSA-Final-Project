@@ -49,33 +49,33 @@ public class GamePanel extends JPanel{
 
 	boolean grounded = false;
 	public GamePanel(GameSideBar sideBar){
-		board = new Cell[Constants.gridLength][Constants.gridWidth];
-		for(int i=0;i<Constants.gridLength;i++) {
-			for(int j=0;j<Constants.gridWidth;j++) {
+		board = new Cell[Properties.gridLength][Properties.gridWidth];
+		for(int i=0;i<Properties.gridLength;i++) {
+			for(int j=0;j<Properties.gridWidth;j++) {
 				board[i][j] = new Cell(j,i);
 			}
 		}
 		Tile = null;
 		try {
-			Tile = ImageIO.read(new File(Constants.img));
+			Tile = ImageIO.read(new File(Properties.img));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		sb = sideBar;
-		t = new Timer(Constants.tick,new timey());
+		t = new Timer(Properties.tick,new timey());
 		t.start();
 
 		addKeyListener(new keyboard());
 		
 		// Just a reminder that this will not necessarily work for some all board dimensions (such as 4 by 4) as some blocks are positioned with their coordinates starting way to the left. 
-		currT = new Tetrimino(Constants.gridWidth/2, 1);
-		nextT = new Tetrimino(Constants.gridWidth/2, 1);
+		currT = new Tetrimino(Properties.gridWidth/2, 1);
+		nextT = new Tetrimino(Properties.gridWidth/2, 1);
 		sb.setNext(nextT);
 		
-		playYes = new SmartRectangle((Constants.gridWidth*Constants.blockSize)/2-80, (Constants.gridLength*Constants.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 15));
-		playNo = new SmartRectangle((Constants.gridWidth*Constants.blockSize)/2+20, (Constants.gridLength*Constants.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 15));
+		playYes = new SmartRectangle((Properties.gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 15));
+		playNo = new SmartRectangle((Properties.gridWidth*Properties.blockSize)/2+20, (Properties.gridLength*Properties.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 15));
 	}
 
 	public void paintComponent(Graphics g) {
@@ -178,11 +178,11 @@ public class GamePanel extends JPanel{
 				
 				if (board.length % 2 == 0)
 				{
-					animationBlocks[relIndex] = getCell(Constants.gridWidth / 2, i).copyCell();
-					animationBlocks[relIndex + 1] = getCell(Constants.gridWidth / 2 - 1, i).copyCell();
+					animationBlocks[relIndex] = getCell(Properties.gridWidth / 2, i).copyCell();
+					animationBlocks[relIndex + 1] = getCell(Properties.gridWidth / 2 - 1, i).copyCell();
 				} else {
-					animationBlocks[relIndex] = getCell(Constants.gridWidth / 2, i).copyCell();
-					animationBlocks[relIndex + 1] = getCell(Constants.gridWidth / 2, i).copyCell();
+					animationBlocks[relIndex] = getCell(Properties.gridWidth / 2, i).copyCell();
+					animationBlocks[relIndex + 1] = getCell(Properties.gridWidth / 2, i).copyCell();
 				}
 				
 				
@@ -228,7 +228,7 @@ public class GamePanel extends JPanel{
 					
 					if (leftBlock != null && rightBlock != null)
 					{
-						if (rightBlock.x <= Constants.gridWidth - 1 && leftBlock.x >= 0)
+						if (rightBlock.x <= Properties.gridWidth - 1 && leftBlock.x >= 0)
 						{
 							animationBlocks[i] = new Cell(rightBlock.x + 1, rightBlock.y);
 							animationBlocks[i + 1] = new Cell(leftBlock.x - 1, leftBlock.y);
@@ -266,7 +266,7 @@ public class GamePanel extends JPanel{
 			{
 				int y = animationBlocks[i].y;
 				
-				for (int j = 0; j < Constants.gridWidth; j++)
+				for (int j = 0; j < Properties.gridWidth; j++)
 				{
 					
 					setCell(j, y, Color.BLACK, false);
@@ -275,7 +275,7 @@ public class GamePanel extends JPanel{
 			
 		}
 		
-		for (int i = Constants.gridLength - 1; i > 0; i--)
+		for (int i = Properties.gridLength - 1; i > 0; i--)
 		{
 			if (isRowMoveable(i))
 			{
@@ -293,7 +293,7 @@ public class GamePanel extends JPanel{
 	
 	public void moveRow (int row)
 	{
-		for (int i = 0; i < Constants.gridWidth; i++)
+		for (int i = 0; i < Properties.gridWidth; i++)
 		{
 			Cell currentCell = getCell(i, row);
 			setCell(i, row + 1, currentCell.c, currentCell.occupied);
@@ -304,7 +304,7 @@ public class GamePanel extends JPanel{
 	
 	public boolean isRowMoveable (int row)
 	{
-		if (row >= Constants.gridLength - 1)
+		if (row >= Properties.gridLength - 1)
 		{
 			return false;
 		}
@@ -312,7 +312,7 @@ public class GamePanel extends JPanel{
 		boolean isOccupied = false;
 		boolean isBelowOccupied = false;
 		
-		for (int j = 0; j < Constants.gridWidth; j++)
+		for (int j = 0; j < Properties.gridWidth; j++)
 		{
 			if (getCell(j, row).isOccupied())
 			{
@@ -371,9 +371,9 @@ public class GamePanel extends JPanel{
 	}
 
 	public boolean isOpen(int x,int y) {
-		if(x>Constants.gridWidth-1||x<0)
+		if(x>Properties.gridWidth-1||x<0)
 			return false;
-		if(y>Constants.gridLength-1||y<0)
+		if(y>Properties.gridLength-1||y<0)
 			return false;
 		if(board[y][x].isOccupied())
 			return false;
@@ -400,7 +400,7 @@ public class GamePanel extends JPanel{
 		copy.drop(board);
 		g2.setStroke(new BasicStroke(3));
 		for(int i= 0;i<4;i++) {
-			g.drawRect((int)(Constants.blockSize*(copy.x+copy.shape[i][0])),(int)(Constants.blockSize*(copy.y+copy.shape[i][1])), Constants.blockSize, Constants.blockSize);
+			g.drawRect((int)(Properties.blockSize*(copy.x+copy.shape[i][0])),(int)(Properties.blockSize*(copy.y+copy.shape[i][1])), Properties.blockSize, Properties.blockSize);
 		}
 	}
 
@@ -410,7 +410,7 @@ public class GamePanel extends JPanel{
 		}
 		playSound("drop.wav");
 		currT = nextT;
-		nextT = new Tetrimino(Constants.gridWidth/2,0);
+		nextT = new Tetrimino(Properties.gridWidth/2,0);
 		sb.setNext(nextT);
 
 		for(int i=0;i<4;i++) {

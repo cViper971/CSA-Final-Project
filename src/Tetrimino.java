@@ -131,7 +131,7 @@ public class Tetrimino {
 		for(int i = 0;i<4;i++) {
 			
 			
-			if(y+shape[i][1]>=Constants.gridLength-1) {
+			if(y+shape[i][1]>=Properties.gridLength-1) {
 				return true;
 			}else if(board[(int)(y+shape[i][1])+1][(int)(x+shape[i][0])].isOccupied()==true){
 				return true;
@@ -147,8 +147,8 @@ public class Tetrimino {
 
 
 			g.setColor(color);
-			g.fillRect(Constants.blockSize*currX, Constants.blockSize*currY, Constants.blockSize, Constants.blockSize);
-			g.drawImage(Tile,currX*Constants.blockSize, currY*Constants.blockSize, null);
+			g.fillRect(Properties.blockSize*currX, Properties.blockSize*currY, Properties.blockSize, Properties.blockSize);
+			g.drawImage(Tile,currX*Properties.blockSize, currY*Properties.blockSize, null);
 		}
 	}
 
@@ -161,8 +161,8 @@ public class Tetrimino {
 
 
 			g.setColor(color);
-			g.fillRect(Constants.blockSize*currX + pX, Constants.blockSize*currY + pY, Constants.blockSize, Constants.blockSize);
-			g.drawImage(Tile,currX*Constants.blockSize + pX, currY*Constants.blockSize + pY, null);
+			g.fillRect(Properties.blockSize*currX + pX, Properties.blockSize*currY + pY, Properties.blockSize, Properties.blockSize);
+			g.drawImage(Tile,currX*Properties.blockSize + pX, currY*Properties.blockSize + pY, null);
 		}
 	}
 

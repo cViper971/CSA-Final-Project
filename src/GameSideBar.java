@@ -37,7 +37,7 @@ public class GameSideBar extends JPanel{
 
 		Tile = null;
 		try {
-			Tile = ImageIO.read(new File(Constants.img));
+			Tile = ImageIO.read(new File(Properties.img));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -118,7 +118,7 @@ public class GameSideBar extends JPanel{
 				}
 			}
 
-			int centerX = (w - (maxX + 1) * Constants.blockSize) / 2;
+			int centerX = (w - (maxX + 1) * Properties.blockSize) / 2;
 
 			g.setColor(nextTetrimino.colors[nextTetrimino.pieceNum]);
 
@@ -145,6 +145,14 @@ public class GameSideBar extends JPanel{
 
 	public void saveHighScore() {
 		sc.close();
+		
+		try {
+			pw = new PrintWriter(new File("highScore.txt"));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		pw.write(""+highScore);
 		pw.close();
 	}

@@ -25,7 +25,7 @@ public class Cell {
 		this.occupied = occupied;
 		
 		try {
-			tile = ImageIO.read(new File(Constants.img));
+			tile = ImageIO.read(new File(Properties.img));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,8 +36,8 @@ public class Cell {
 		
 		if(occupied) {
 			g.setColor(c);
-			g.fillRect(x*Constants.blockSize, y*Constants.blockSize, Constants.blockSize, Constants.blockSize);
-			g.drawImage(tile, x*Constants.blockSize, y*Constants.blockSize, null);
+			g.fillRect(x*Properties.blockSize, y*Properties.blockSize, Properties.blockSize, Properties.blockSize);
+			g.drawImage(tile, x*Properties.blockSize, y*Properties.blockSize, null);
 		}
 	}
 	
