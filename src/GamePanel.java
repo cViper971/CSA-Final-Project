@@ -1,5 +1,6 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -38,6 +39,9 @@ public class GamePanel extends JPanel{
 	public boolean breakAnimationStart = false;
 	public int lowestIndex = 0;
 	
+	public boolean gameOver = false;
+	public SmartRectangle playYes, playNo;
+	
 
 
 	boolean grounded = false;
@@ -66,7 +70,9 @@ public class GamePanel extends JPanel{
 		currT = new Tetrimino(Constants.gridWidth/2, 1);
 		nextT = new Tetrimino(Constants.gridWidth/2, 1);
 		sb.setNext(nextT);
-		 
+		
+		playYes = new SmartRectangle((Constants.gridWidth*Constants.blockSize)/2-80, (Constants.gridLength*Constants.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 15));
+		playNo = new SmartRectangle((Constants.gridWidth*Constants.blockSize)/2+20, (Constants.gridLength*Constants.blockSize)/2+50, 20, 15, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 15));
 	}
 
 	public void paintComponent(Graphics g) {
@@ -78,12 +84,17 @@ public class GamePanel extends JPanel{
 		{
 			for(Cell c:cells)
 			{
-				
-				
-				
 				c.paintCell(g);
 			}
-			//System.out.println();
+		}
+		
+		if(gameOver) {
+			g.setColor(Color.RED);
+			g.setFont(new Font ("Monospace", Font.BOLD, 50));
+			int offset = g.getFontMetrics().stringWidth("GAME OVER");
+			g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2);
+			playYes.draw(g);
+			playNo.draw(g);
 		}
 	}
 
@@ -384,7 +395,7 @@ public class GamePanel extends JPanel{
 			if(!isOpen(currX(i),currY(i))) {
 				t.stop();
 				sb.saveHighScore();
-				System.out.println("game over");
+				runGameOver();
 			}
 		}
 	}
@@ -402,6 +413,10 @@ public class GamePanel extends JPanel{
 		movementDelay = (int)(80*Math.pow(0.75785828325, level)); //multiplier so last level has tick of 5
 		movementTickDelay = movementDelay;
 		sb.setLevel(level);
+	}
+	
+	public void runGameOver(){
+		gameOver = true;
 	}
 
 	public int currX(int i) {

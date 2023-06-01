@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.MouseInfo;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -52,38 +53,47 @@ public class TetrisFrame extends JFrame {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			
-			if (panelNum != 0)
+			if (panelNum == 0)
 			{
-				return;
+				int mX = MouseInfo.getPointerInfo().getLocation().x - main.getLocationOnScreen().x;
+				int mY = MouseInfo.getPointerInfo().getLocation().y - main.getLocationOnScreen().y;
+				
+				if (main.singlePlay.isMouseInside(mX, mY))
+				{
+					getContentPane().remove(main);
+					
+					getContentPane().setFocusable(false);
+					initalizeGame();
+					getContentPane().revalidate();
+					
+					panelNum = 1;
+			        
+				}
+					
+				if (main.Settings.isMouseInside(mX, mY))
+				{
+					getContentPane().remove(main);
+					
+					getContentPane().setFocusable(false);
+					loadSettings();
+					getContentPane().revalidate();
+					
+					panelNum = 2;
+				}
 			}
-			
-			
-			
-			int mX = MouseInfo.getPointerInfo().getLocation().x - main.getLocationOnScreen().x;
-			int mY = MouseInfo.getPointerInfo().getLocation().y - main.getLocationOnScreen().y;
-			
-			if (main.singlePlay.isMouseInside(mX, mY))
+			if (panelNum == 1&&panel.gameOver==true)
 			{
-				getContentPane().remove(main);
+				int mX = MouseInfo.getPointerInfo().getLocation().x - panel.getLocationOnScreen().x;
+				int mY = MouseInfo.getPointerInfo().getLocation().y - panel.getLocationOnScreen().y;
 				
-				getContentPane().setFocusable(false);
-				initalizeGame();
-				getContentPane().revalidate();
-				
-				panelNum = 1;
-		        
-			}
-				
-			if (main.Settings.isMouseInside(mX, mY))
-			{
-				getContentPane().remove(main);
-				
-				getContentPane().setFocusable(false);
-				loadSettings();
-				getContentPane().revalidate();
-				
-				panelNum = 2;
-		        
+				if (panel.playYes.isMouseInside(mX, mY))
+				{
+					getContentPane().remove(panel);
+					
+					getContentPane().setFocusable(false);
+					initalizeGame();
+					getContentPane().revalidate();
+				}
 			}
 		}
 

@@ -59,10 +59,6 @@ public class SmartRectangle {
 		int minY = y - edgeLength - padding;
 		int maxY = minY + h + 2 * (edgeLength + padding);
 
-		System.out.println(minX + " " + maxX);
-		System.out.println(minY + " " + maxY);
-		System.out.println("******************");
-
 		return mX >= minX && mX <= maxX && mY >= minY && mY <= maxY;
 	}
 }
