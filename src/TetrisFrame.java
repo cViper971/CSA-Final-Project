@@ -201,10 +201,6 @@ public class TetrisFrame extends JFrame {
 				int mX4 = MouseInfo.getPointerInfo().getLocation().x - sideBar2.getLocationOnScreen().x;
 				int mY4 = MouseInfo.getPointerInfo().getLocation().y - sideBar2.getLocationOnScreen().y;
 				
-				
-				
-				System.out.println("Mouse: " + mX1 + " " + mY1);
-				
 				if ((panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2))&&panel.gameOver)
 				{
 					getContentPane().removeAll();
@@ -277,8 +273,6 @@ public class TetrisFrame extends JFrame {
 			sideBar.setBackground(new Color(13, 16, 20));
         
         panel = new GamePanel(sideBar, this, true, false);
-        
-        System.out.println(Properties.darkMode);
 		
 //		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
@@ -382,7 +376,6 @@ public class TetrisFrame extends JFrame {
 	
 	public void twoPOver() {
 		if(panel.gameOver) {
-			System.out.println("this was run");
 			panel2.runWin();
 			return;
 		}
