@@ -15,7 +15,9 @@ import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -73,6 +75,11 @@ public class SettingsPanel extends JPanel {
 		add(outlines);
 		add(darkMode);
 		
+		
+		
+		
+		
+		// Text Fields
 		int textWidth = 115;
 
 		int relIndex = 5;
@@ -94,7 +101,7 @@ public class SettingsPanel extends JPanel {
 				addTextField(option, startX + 575, startY + spacing * relIndex - 23, textWidth, 30, f, i);
 			}
 
-			System.out.println(relIndex);
+			//System.out.println(relIndex);
 
 			add(option);
 			relIndex += 1;
@@ -126,8 +133,6 @@ public class SettingsPanel extends JPanel {
 		g.setColor(Color.BLACK);
 		g.drawString("Outlines", startX, startY);
 		g.drawString("Dark Mode", startX, startY + spacing);
-		g.drawString("Board X", startX, startY + spacing * 2);
-		g.drawString("Board Y", startX, startY + spacing * 3);
 		
 		
 		
@@ -159,6 +164,17 @@ public class SettingsPanel extends JPanel {
 		input.setBackground(Color.WHITE);
 		input.setBounds(x, y, w, h);
 		input.setFont(f);
+	}
+	
+	public void addSlider (JSlider input, int x, int y, int w, int h, int minor, int major, Color col)
+	{
+		input.setBounds(x, y, w, h);
+		input.setBackground(col);
+		input.setSnapToTicks(true);
+		input.setPaintTicks(true);
+		input.setPaintLabels(true);
+		input.setMinorTickSpacing(minor);
+		input.setMajorTickSpacing(major);
 	}
 	
 	public void addTextField (JTextField input, int x, int y, int w, int h, Font f, int variableIndex)

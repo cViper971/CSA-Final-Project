@@ -27,6 +27,7 @@ public class TetrisFrame extends JFrame {
 	private JPanel container;
 	private SettingsPanel page;
 	private Clip goatTetrisTheme;
+	private Keyboard joined;
 	
 	/*
 		0: MainMenu
@@ -114,11 +115,15 @@ public class TetrisFrame extends JFrame {
 
 				if (main.twoPlay.isMouseInside(mX, mY))
 				{
+					// https://stackoverflow.com/questions/641172/how-to-focus-a-jframe
 					getContentPane().remove(main);
-
-					getContentPane().setFocusable(false);
+					setVisible(true);
+					toFront();
+					requestFocus();
+					getContentPane().setFocusable(true);
 					initalizeTwoGame();
 					getContentPane().revalidate();
+					playMusic();
 
 					panelNum = 3;
 				}
@@ -140,7 +145,7 @@ public class TetrisFrame extends JFrame {
 						stopMusic();
 						getContentPane().removeAll();
 	
-						getContentPane().setFocusable(false);
+						getContentPane().setFocusable(true);
 						getContentPane().add(main);
 						getContentPane().revalidate();
 						getContentPane().repaint();
@@ -170,7 +175,7 @@ public class TetrisFrame extends JFrame {
 				if (page.backButton.isMouseInside(mX, mY))
 				{
 					getContentPane().removeAll();
-
+					
 					getContentPane().add(main);
 					getContentPane().revalidate();
 					getContentPane().repaint();
@@ -186,6 +191,7 @@ public class TetrisFrame extends JFrame {
 				int mX2 = MouseInfo.getPointerInfo().getLocation().x - panel2.getLocationOnScreen().x;
 				int mY2 = MouseInfo.getPointerInfo().getLocation().y - panel2.getLocationOnScreen().y;
 				
+				System.out.println("Mouse: " + mX1 + " " + mY1);
 				
 				if (panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2) )
 				{
@@ -200,7 +206,7 @@ public class TetrisFrame extends JFrame {
 				{
 					stopMusic();
 					getContentPane().removeAll();
-					
+					getContentPane().removeKeyListener(joined);
 					getContentPane().setFocusable(false);
 					getContentPane().add(main);
 					getContentPane().revalidate();
@@ -249,6 +255,8 @@ public class TetrisFrame extends JFrame {
 			sideBar.setBackground(new Color(13, 16, 20));
         
         panel = new GamePanel(sideBar, true, false);
+        
+        System.out.println(Properties.darkMode);
 		
 //		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
@@ -258,6 +266,8 @@ public class TetrisFrame extends JFrame {
 				panel.requestFocusInWindow();
 				panel.requestFocus(true);
 				panel.setBackground(new Color(255,255,255));
+				
+				
 				if(Properties.darkMode)
 					panel.setBackground(new Color(26, 32, 41));
 		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth,Properties.blockSize*Properties.gridLength));
@@ -281,6 +291,7 @@ public class TetrisFrame extends JFrame {
 	
 	public void initalizeTwoGame ()
 	{
+		
 		int width = Properties.mainWindowWidth / 2 - Properties.blockSize*Properties.gridWidth / 2;
         int height = Properties.blockSize*Properties.gridLength / 2;
 
@@ -323,11 +334,12 @@ public class TetrisFrame extends JFrame {
         container.add(sideBar2);
         getContentPane().add(container);
 
-        Keyboard joined = new Keyboard();
+        joined = new Keyboard();
         joined.panel1 = panel;
         joined.panel2 = panel2;
 
         addKeyListener(joined);
+        container.setFocusable(true);
 
         container.repaint();
 	}
@@ -343,6 +355,9 @@ public class TetrisFrame extends JFrame {
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {
+			
+			System.out.println("Typed");
+			
 			if(!panel1.gameOver)
 			{
 				// TODO Auto-generated method stub
@@ -394,11 +409,7 @@ public class TetrisFrame extends JFrame {
 				}
 
 				if(e.getKeyCode()==panel2.softKey) {
-//					if (canRotate(true))
-//					{
-//						currT.rotateLeft();
-//					}
-					panel1.movementTickDelay = 5;
+					panel2.movementTickDelay = 5;
 
 
 				}
@@ -415,7 +426,14 @@ public class TetrisFrame extends JFrame {
 		}
 		@Override
 		public void keyReleased(KeyEvent e) {
+			if(panel1.gameOver || panel2.gameOver)
+				return;
 			// TODO Auto-generated method stub
+			if(e.getKeyCode()==panel1.softKey)
+				panel1.movementTickDelay = panel1.movementDelay;
+			
+			if(e.getKeyCode()==panel2.softKey)
+				panel2.movementTickDelay = panel2.movementDelay;
 
 		}
 	}
