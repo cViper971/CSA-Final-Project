@@ -35,7 +35,7 @@ public class GamePanel extends JPanel{
 	public Timer t;
 	
 	public int amountTicks = 0;
-	public int movementDelay = 80;
+	public int movementDelay = 60;
 	public int movementTickDelay = movementDelay;
 	public int animationTickDelay = 5;
 	
@@ -161,7 +161,7 @@ public class GamePanel extends JPanel{
 				if (canRotate(false))
 					currT.rotateRight();
 			if(e.getKeyCode()==softKey) 
-				movementTickDelay = 5;
+				movementTickDelay = 4;
 	
 			if(e.getKeyCode()==hardKey) {
 				updateScore(2*currT.drop(board));
@@ -458,7 +458,7 @@ public class GamePanel extends JPanel{
 		level = totalLines/10+1;
 		if(level>10)
 			level=10;
-		movementDelay = (int)(80*Math.pow(0.77785828325, level)); //multiplier so last level has tick of 6
+		movementDelay = (int)(60*Math.pow(0.7899771419, level)); //multiplier so last level has tick of 6
 		movementTickDelay = movementDelay;
 		System.out.println(movementDelay);
 		sb.setLevel(level);

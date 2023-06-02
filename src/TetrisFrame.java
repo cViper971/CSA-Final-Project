@@ -142,6 +142,7 @@ public class TetrisFrame extends JFrame {
 					}
 					if (panel.playNo.isMouseInside(mX, mY))
 					{
+						panel.t.stop();
 						stopMusic();
 						getContentPane().removeAll();
 	
@@ -156,6 +157,8 @@ public class TetrisFrame extends JFrame {
 					int mY = MouseInfo.getPointerInfo().getLocation().y - sideBar.getLocationOnScreen().y;
 					if (sideBar.getExit().isMouseInside(mX, mY))
 					{
+						panel.t.stop();
+						panel.sb.saveHighScore();
 						stopMusic();
 						getContentPane().removeAll();
 	
@@ -204,6 +207,8 @@ public class TetrisFrame extends JFrame {
 				}
 				if (panel.playNo.isMouseInside(mX1, mY1) || panel2.playNo.isMouseInside(mX2, mY2) )
 				{
+					panel.t.stop();
+					panel2.t.stop();
 					stopMusic();
 					getContentPane().removeAll();
 					getContentPane().removeKeyListener(joined);
@@ -265,9 +270,8 @@ public class TetrisFrame extends JFrame {
 				panel.requestFocus();
 				panel.requestFocusInWindow();
 				panel.requestFocus(true);
+				
 				panel.setBackground(new Color(255,255,255));
-				
-				
 				if(Properties.darkMode)
 					panel.setBackground(new Color(26, 32, 41));
 		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth,Properties.blockSize*Properties.gridLength));
@@ -293,7 +297,7 @@ public class TetrisFrame extends JFrame {
 	{
 		
 		int width = Properties.mainWindowWidth / 2 - Properties.blockSize*Properties.gridWidth / 2;
-        int height = Properties.blockSize*Properties.gridLength / 2;
+        int height = Properties.blockSize*Properties.gridLength;
 
 		sideBar = new GameSideBar(width, height);
 		sideBar.setPreferredSize(new Dimension(width, height));
@@ -302,21 +306,31 @@ public class TetrisFrame extends JFrame {
         sideBar2 = new GameSideBar(width, height);
 		sideBar2.setPreferredSize(new Dimension(width, height));
         sideBar2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth, Properties.blockSize*Properties.gridLength);
+        
+        sideBar.setBackground(new Color(237, 239, 245));
+        sideBar2.setBackground(new Color(237, 239, 245));
+        if(Properties.darkMode)
+        	sideBar.setBackground(new Color(13, 16, 20));
+			sideBar2.setBackground(new Color(13, 16, 20));
 
 		panel = new GamePanel(sideBar, false, true);
 		panel2 = new GamePanel(sideBar2, true, true);
+		
+		panel.setBackground(new Color(255,255,255));
+		panel2.setBackground(new Color(255,255,255));
+		if(Properties.darkMode)
+			panel.setBackground(new Color(26, 32, 41));
+			panel2.setBackground(new Color(26, 32, 41));
 
 //		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
 			@Override
 			public void run() {
 				//panel.requestFocus(true);
-				panel.setBackground(Color.BLACK);
 		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.blockSize*Properties.gridLength));
 		        panel.setBounds(0, 0, Properties.blockSize*Properties.gridWidth / 2, Properties.blockSize*Properties.gridLength);
 
 				//panel2.requestFocus(true);
-				panel2.setBackground(Color.BLACK);
 		        panel2.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.blockSize*Properties.gridLength));
 		        panel2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.blockSize*Properties.gridWidth, Properties.blockSize*Properties.gridLength);
 
