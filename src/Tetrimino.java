@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class Tetrimino {
@@ -165,6 +166,7 @@ public class Tetrimino {
 			g.drawImage(Tile,currX*Properties.blockSize + pX, currY*Properties.blockSize + pY, null);
 		}
 	}
+	
 
 	public static int[][] deepClone (int[][] array)
 	{

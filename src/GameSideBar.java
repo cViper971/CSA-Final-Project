@@ -30,7 +30,7 @@ public class GameSideBar extends JPanel{
 	private PrintWriter pw;
 	private Button exit;
 
-	public GameSideBar (int w, int h)
+	public GameSideBar (int w, int h, boolean twoPlayer)
 	{
 		setBackground(Color.WHITE);
 		this.w = w;
@@ -42,7 +42,14 @@ public class GameSideBar extends JPanel{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
+		
+		if (twoPlayer)
+		{
+			Tile = resize(Tile, Properties.blockSize, Properties.blockSize);
+		}
+		
+		
 		try {
 			sc = new Scanner(new File("highScore.txt"));
 		} catch (FileNotFoundException e) {
@@ -51,6 +58,15 @@ public class GameSideBar extends JPanel{
 		}
 		highScore = sc.nextLong();
 		exit = new Button(w/2-40, 3*h/4+20, 80, 35, 3, 5, new Color[] {Color.BLACK, new Color(235, 106, 127), Color.BLACK}, "QUIT", new Font("Monospace", Font.PLAIN, 20));
+	}
+	
+	public BufferedImage resize(BufferedImage image, int width, int height) {
+	    BufferedImage resizedImage = new BufferedImage(width, height,
+	    BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = resizedImage.createGraphics();
+	    g.drawImage(image, 0, 0, width, height, null);
+	    g.dispose();
+	    return resizedImage;
 	}
 
 	public void paintComponent (Graphics g)

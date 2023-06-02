@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,17 +13,19 @@ public class Cell {
 	public int x;
 	public int y;
 	public BufferedImage tile;
+	public boolean isTwoPlayer;
 	
-	public Cell(int x, int y) {
-		this(x, y, Color.BLACK, false);
+	public Cell(int x, int y, boolean isTwoplayer) {
+		this(x, y, Color.BLACK, false, isTwoplayer);
 	}
 	
-	public Cell (int x, int y, Color col, boolean occupied)
+	public Cell (int x, int y, Color col, boolean occupied, boolean isTwoPlayer)
 	{
 		this.x = x;
 		this.y = y;
 		this.c = col;
 		this.occupied = occupied;
+		this.isTwoPlayer = isTwoPlayer;
 		
 		try {
 			tile = ImageIO.read(new File(Properties.img));
@@ -30,8 +33,22 @@ public class Cell {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		if (isTwoPlayer)
+		{
+			tile = resize(tile, Properties.blockSize, Properties.blockSize);
+		}
 	}
 	
+	public BufferedImage resize(BufferedImage image, int width, int height) {
+	    BufferedImage resizedImage = new BufferedImage(width, height,
+	    BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = resizedImage.createGraphics();
+	    g.drawImage(image, 0, 0, width, height, null);
+	    g.dispose();
+	    return resizedImage;
+	}
+
 	public void paintCell(Graphics g) {
 		
 		if(occupied) {
@@ -56,6 +73,6 @@ public class Cell {
 	
 	public Cell copyCell ()
 	{
-		return new Cell(this.x, this.y, this.c, this.occupied);
+		return new Cell(this.x, this.y, this.c, this.occupied, this.isTwoPlayer);
 	}
 }

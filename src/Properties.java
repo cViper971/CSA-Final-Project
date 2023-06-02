@@ -1,13 +1,13 @@
 import java.awt.event.KeyEvent;
 
 public class Properties {
-	public static final int blockSize = 30;
+	public static int blockSize = 30;
 	public static final String img="Tile.png";
 	public static final int tick = 10;
 
 	// The gridWidth must be divisible by 2
 	public static int gridWidth = 10;
-	public static int gridLength = 25;
+	public static int gridLength = 26;
 	public static boolean colorOutlines = true;
 	public static boolean darkMode = true;
 
@@ -23,6 +23,6 @@ public class Properties {
 	public static int player2Soft = KeyEvent.VK_S;
 	public static int player2Hard = KeyEvent.VK_SHIFT;
 	
-	public static final int mainWindowWidth = 700;
-	public static final int mainWindowHeight = blockSize * gridLength;
+	public static int mainWindowWidth = 700;
+	public static int mainWindowHeight = blockSize * gridLength;
 }

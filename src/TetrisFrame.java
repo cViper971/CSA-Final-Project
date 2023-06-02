@@ -18,8 +18,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class TetrisFrame extends JFrame {
 	
@@ -94,6 +92,7 @@ public class TetrisFrame extends JFrame {
 				{
 					getContentPane().remove(main);
 					
+					Properties.blockSize = 30;
 					getContentPane().setFocusable(false);
 					initalizeGame();
 					getContentPane().revalidate();
@@ -126,11 +125,11 @@ public class TetrisFrame extends JFrame {
 					initalizeTwoGame();
 					getContentPane().revalidate();
 					playMusic();
-
+					
 					panelNum = 3;
 				}
 			}
-			if (panelNum ==1) {
+			if (panelNum == 1) {
 				if(panel.gameOver==true) {
 					int mX = MouseInfo.getPointerInfo().getLocation().x - panel.getLocationOnScreen().x;
 					int mY = MouseInfo.getPointerInfo().getLocation().y - panel.getLocationOnScreen().y;
@@ -195,10 +194,18 @@ public class TetrisFrame extends JFrame {
 				
 				int mX2 = MouseInfo.getPointerInfo().getLocation().x - panel2.getLocationOnScreen().x;
 				int mY2 = MouseInfo.getPointerInfo().getLocation().y - panel2.getLocationOnScreen().y;
+
+				int mX3 = MouseInfo.getPointerInfo().getLocation().x - sideBar.getLocationOnScreen().x;
+				int mY3 = MouseInfo.getPointerInfo().getLocation().y - sideBar.getLocationOnScreen().y;
+				
+				int mX4 = MouseInfo.getPointerInfo().getLocation().x - sideBar2.getLocationOnScreen().x;
+				int mY4 = MouseInfo.getPointerInfo().getLocation().y - sideBar2.getLocationOnScreen().y;
+				
+				
 				
 				System.out.println("Mouse: " + mX1 + " " + mY1);
 				
-				if (panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2) )
+				if (panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2))
 				{
 					getContentPane().removeAll();
 					
@@ -207,11 +214,16 @@ public class TetrisFrame extends JFrame {
 					getContentPane().revalidate();
 					panelNum = 3;
 				}
-				if (panel.playNo.isMouseInside(mX1, mY1) || panel2.playNo.isMouseInside(mX2, mY2) )
+				if (panel.playNo.isMouseInside(mX1, mY1) || panel2.playNo.isMouseInside(mX2, mY2) || sideBar.getExit().isMouseInside(mX3, mY3) || sideBar2.getExit().isMouseInside(mX4, mY4))
 				{
 					panel.t.stop();
 					panel2.t.stop();
 					stopMusic();
+					
+					Properties.blockSize = 30;
+					Properties.gridWidth = 10;
+					Properties.gridLength = 26;
+					
 					getContentPane().removeAll();
 					getContentPane().removeKeyListener(joined);
 					getContentPane().setFocusable(false);
@@ -251,10 +263,11 @@ public class TetrisFrame extends JFrame {
 	
 	public void initalizeGame ()
 	{
+		
 		int width = Properties.mainWindowWidth - Properties.blockSize*Properties.gridWidth;
         int height = Properties.blockSize*Properties.gridLength;
         
-		sideBar = new GameSideBar(width, height);
+		sideBar = new GameSideBar(width, height, false);
 		sideBar.setPreferredSize(new Dimension(width, height));
         sideBar.setBounds(Properties.blockSize*Properties.gridWidth, 0, Properties.mainWindowWidth, Properties.blockSize*Properties.gridLength);
         sideBar.setBackground(new Color(237, 239, 245));
@@ -297,17 +310,20 @@ public class TetrisFrame extends JFrame {
 	
 	public void initalizeTwoGame ()
 	{
+		Properties.blockSize = 20;
+		Properties.gridWidth = 20;
+		Properties.gridLength = 39;
 		
 		int width = Properties.mainWindowWidth / 2 - Properties.blockSize*Properties.gridWidth / 2;
         int height = Properties.blockSize*Properties.gridLength;
 
-		sideBar = new GameSideBar(width, height);
+		sideBar = new GameSideBar(width, height, true);
 		sideBar.setPreferredSize(new Dimension(width, height));
-        sideBar.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth / 2, Properties.blockSize*Properties.gridLength);
-
-        sideBar2 = new GameSideBar(width, height);
+        sideBar.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth / 2, Properties.mainWindowHeight);
+        
+        sideBar2 = new GameSideBar(width, height, true);
 		sideBar2.setPreferredSize(new Dimension(width, height));
-        sideBar2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth, Properties.blockSize*Properties.gridLength);
+        sideBar2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.mainWindowWidth, Properties.mainWindowHeight);
         
         sideBar.setBackground(new Color(237, 239, 245));
         sideBar2.setBackground(new Color(237, 239, 245));
@@ -331,12 +347,12 @@ public class TetrisFrame extends JFrame {
 			@Override
 			public void run() {
 				//panel.requestFocus(true);
-		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.blockSize*Properties.gridLength));
-		        panel.setBounds(0, 0, Properties.blockSize*Properties.gridWidth / 2, Properties.blockSize*Properties.gridLength);
+		        panel.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.mainWindowHeight));
+		        panel.setBounds(0, 0, Properties.blockSize*Properties.gridWidth / 2, Properties.mainWindowHeight);
 
 				//panel2.requestFocus(true);
-		        panel2.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.blockSize*Properties.gridLength));
-		        panel2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.blockSize*Properties.gridWidth, Properties.blockSize*Properties.gridLength);
+		        panel2.setPreferredSize(new Dimension(Properties.blockSize*Properties.gridWidth / 2,Properties.mainWindowHeight));
+		        panel2.setBounds(Properties.blockSize*Properties.gridWidth / 2, 0, Properties.blockSize*Properties.gridWidth, Properties.mainWindowHeight);
 
 
 

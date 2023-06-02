@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,13 +50,22 @@ public class GamePanel extends JPanel{
 	
 	public int gridWidth = Properties.gridWidth;
 	public int leftKey, rightKey, rotateKey, softKey, hardKey;
-	
 	public boolean isTwoPlayer, isPlayer1;
-	
 
 
 	boolean grounded = false;
+
 	public GamePanel(GameSideBar sideBar, TetrisFrame tf, boolean isPlayer1, boolean isTwoPlayer){
+		
+		if (isTwoPlayer)
+		{
+			gridWidth /= 2;
+			
+		}
+		this.tf = tf;
+		this.isPlayer1 = isPlayer1;
+		this.isTwoPlayer = isTwoPlayer;
+		
 		if (isPlayer1)
 		{
 			this.leftKey = Properties.player1Left;
@@ -71,29 +81,32 @@ public class GamePanel extends JPanel{
 			this.hardKey = Properties.player2Hard;
 		}
 
-		if (isTwoPlayer)
-		{
-			gridWidth /= 2;
-		}
-
 		board = new Cell[Properties.gridLength][gridWidth];
 		for(int i=0;i<Properties.gridLength;i++) {
 			for(int j=0;j<gridWidth;j++) {
-				board[i][j] = new Cell(j,i);
+				board[i][j] = new Cell(j,i, isTwoPlayer);
 			}
 		}
+		
 		Tile = null;
 		try {
 			Tile = ImageIO.read(new File(Properties.img));
+			
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+		if (isTwoPlayer)
+		{
+			//https://stackoverflow.com/questions/9417356/bufferedimage-resize
+			Tile = resize(Tile, Properties.blockSize, Properties.blockSize);
+			
+			
+		}
+		
 		sb = sideBar;
-		this.tf = tf;
-		this.isPlayer1 = isPlayer1;
-		this.isTwoPlayer = isTwoPlayer;
 		t = new Timer(Properties.tick,new timey());
 		t.start();
 
@@ -109,6 +122,17 @@ public class GamePanel extends JPanel{
 		
 		playYes = new Button((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+60, 50, 20, 2, 5, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 22));
 		playNo = new Button((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+60, 50, 20, 2, 5, new Color[] {new Color(140, 49, 58), new Color(230, 83, 97), Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 22));
+	}
+	
+	
+	// https://componenthouse.com/2008/02/08/high-quality-image-resize-with-java/
+	public BufferedImage resize(BufferedImage image, int width, int height) {
+	    BufferedImage resizedImage = new BufferedImage(width, height,
+	    BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g = resizedImage.createGraphics();
+	    g.drawImage(image, 0, 0, width, height, null);
+	    g.dispose();
+	    return resizedImage;
 	}
 
 	public void paintComponent(Graphics g) {
@@ -128,17 +152,19 @@ public class GamePanel extends JPanel{
 		if(gameOver) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+
 			if(won) {
 				g.setColor(Color.GREEN);
-				g.setFont(new Font ("Monospace", Font.BOLD, 50));
+				g.setFont(new Font ("Monospace", Font.BOLD, 30));
 				int offset = g.getFontMetrics().stringWidth("YOU WIN");
 				g.drawString("YOU WIN", (this.getWidth() - offset) / 2, this.getHeight()/2-10);
 			}else {
 				g.setColor(Color.RED);
-				g.setFont(new Font ("Monospace", Font.BOLD, 50));
+				g.setFont(new Font ("Monospace", Font.BOLD, 30));
 				int offset = g.getFontMetrics().stringWidth("GAME OVER");
 				g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2-10);
 			}
+
 			g.setColor(Color.BLACK);
 			if(Properties.darkMode)
 				g.setColor(Color.WHITE);
@@ -271,15 +297,15 @@ public class GamePanel extends JPanel{
 					{
 						if (rightBlock.x <= gridWidth - 1 && leftBlock.x >= 0)
 						{
-							animationBlocks[i] = new Cell(rightBlock.x + 1, rightBlock.y);
-							animationBlocks[i + 1] = new Cell(leftBlock.x - 1, leftBlock.y);
+							animationBlocks[i] = new Cell(rightBlock.x + 1, rightBlock.y, isTwoPlayer);
+							animationBlocks[i + 1] = new Cell(leftBlock.x - 1, leftBlock.y, isTwoPlayer);
 							
 							setCell(rightBlock.x, rightBlock.y, Color.WHITE, true);
 							setCell(leftBlock.x, leftBlock.y, Color.WHITE, true);
 						} else {
 							
-							animationBlocks[i] = new Cell(rightBlock.x - 1, rightBlock.y);
-							animationBlocks[i + 1] = new Cell(leftBlock.x + 1, leftBlock.y);
+							animationBlocks[i] = new Cell(rightBlock.x - 1, rightBlock.y, isTwoPlayer);
+							animationBlocks[i + 1] = new Cell(leftBlock.x + 1, leftBlock.y, isTwoPlayer);
 							
 							moveBlocksDown(lowestIndex, animationBlocks);
 							repaint();
@@ -450,8 +476,8 @@ public class GamePanel extends JPanel{
 		currT = nextT;
 		nextT = new Tetrimino(gridWidth/2,0);
 		sb.setNext(nextT);
-
 		boolean gameOverFR = false;
+		
 		for(int i=0;i<4;i++) {
 			if(!isOpen(currX(i),currY(i))) {
 				t.stop();
@@ -460,8 +486,11 @@ public class GamePanel extends JPanel{
 				gameOverFR = true;
 			}
 		}
-		if(gameOverFR)
+		
+		if (gameOverFR)
+		{
 			runGameOver();
+		}
 	}
 
 	public void updateScore(int change) {
@@ -509,6 +538,7 @@ public class GamePanel extends JPanel{
 		this.board[y][x].setColor(c);
 		this.board[y][x].setOccupied(occupied);
 	}
+
 
 	private class timey implements ActionListener{
 
