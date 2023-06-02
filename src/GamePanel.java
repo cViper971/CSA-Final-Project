@@ -546,7 +546,6 @@ public class GamePanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			
-			
 			if (amountTicks >= movementTickDelay) 
 			{
 				if(grounded) {
@@ -569,7 +568,6 @@ public class GamePanel extends JPanel{
 	
 				}
 			}
-			
 			
 			amountTicks+= 1;
 			

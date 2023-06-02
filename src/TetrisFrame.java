@@ -205,7 +205,7 @@ public class TetrisFrame extends JFrame {
 				
 				System.out.println("Mouse: " + mX1 + " " + mY1);
 				
-				if (panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2))
+				if ((panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2))&&panel.gameOver)
 				{
 					getContentPane().removeAll();
 					
@@ -214,7 +214,9 @@ public class TetrisFrame extends JFrame {
 					getContentPane().revalidate();
 					panelNum = 3;
 				}
-				if (panel.playNo.isMouseInside(mX1, mY1) || panel2.playNo.isMouseInside(mX2, mY2) || sideBar.getExit().isMouseInside(mX3, mY3) || sideBar2.getExit().isMouseInside(mX4, mY4))
+				if (((panel.playNo.isMouseInside(mX1, mY1) || panel2.playNo.isMouseInside(mX2, mY2))&&panel.gameOver)
+					|| 
+					(sideBar.getExit().isMouseInside(mX3, mY3) || sideBar2.getExit().isMouseInside(mX4, mY4)))
 				{
 					panel.t.stop();
 					panel2.t.stop();
