@@ -18,6 +18,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class TetrisFrame extends JFrame {
 	
@@ -259,7 +261,7 @@ public class TetrisFrame extends JFrame {
         if(Properties.darkMode)
 			sideBar.setBackground(new Color(13, 16, 20));
         
-        panel = new GamePanel(sideBar, true, false);
+        panel = new GamePanel(sideBar, this, true, false);
         
         System.out.println(Properties.darkMode);
 		
@@ -314,8 +316,8 @@ public class TetrisFrame extends JFrame {
 			sideBar2.setBackground(new Color(13, 16, 20));
         }
 
-		panel = new GamePanel(sideBar, false, true);
-		panel2 = new GamePanel(sideBar2, true, true);
+		panel = new GamePanel(sideBar, this, false, true);
+		panel2 = new GamePanel(sideBar2, this, true, true);
 		
 		panel.setBackground(new Color(255,255,255));
 		panel2.setBackground(new Color(255,255,255));
@@ -358,6 +360,18 @@ public class TetrisFrame extends JFrame {
         container.setFocusable(true);
 
         container.repaint();
+	}
+	
+	public void twoPOver() {
+		if(panel.gameOver) {
+			System.out.println("this was run");
+			panel2.runWin();
+			return;
+		}
+		if(panel2.gameOver) {
+			panel.runWin();
+			return;
+		}
 	}
 
 	private class Keyboard implements KeyListener {

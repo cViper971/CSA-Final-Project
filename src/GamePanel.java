@@ -26,6 +26,7 @@ public class GamePanel extends JPanel{
 	public Tetrimino nextT;
 
 	public GameSideBar sb;
+	public TetrisFrame tf;
 
 	public long score;
 	public int level = 1;
@@ -43,17 +44,18 @@ public class GamePanel extends JPanel{
 	public boolean breakAnimationStart = false;
 	public int lowestIndex = 0;
 	
-	public boolean gameOver = false;
+	public boolean gameOver = false, won = false;
 	public Button playYes, playNo;
 	
 	public int gridWidth = Properties.gridWidth;
 	public int leftKey, rightKey, rotateKey, softKey, hardKey;
 	
+	public boolean isTwoPlayer, isPlayer1;
+	
 
 
 	boolean grounded = false;
-	public GamePanel(GameSideBar sideBar, boolean isPlayer1, boolean isTwoPlayer){
-
+	public GamePanel(GameSideBar sideBar, TetrisFrame tf, boolean isPlayer1, boolean isTwoPlayer){
 		if (isPlayer1)
 		{
 			this.leftKey = Properties.player1Left;
@@ -89,6 +91,9 @@ public class GamePanel extends JPanel{
 		}
 		
 		sb = sideBar;
+		this.tf = tf;
+		this.isPlayer1 = isPlayer1;
+		this.isTwoPlayer = isTwoPlayer;
 		t = new Timer(Properties.tick,new timey());
 		t.start();
 
@@ -123,12 +128,17 @@ public class GamePanel extends JPanel{
 		if(gameOver) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
-			g.setColor(Color.RED);
-			g.setFont(new Font ("Monospace", Font.BOLD, 50));
-			int offset = g.getFontMetrics().stringWidth("GAME OVER");
-			g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2-10);
-
+			if(won) {
+				g.setColor(Color.GREEN);
+				g.setFont(new Font ("Monospace", Font.BOLD, 50));
+				int offset = g.getFontMetrics().stringWidth("YOU WIN");
+				g.drawString("YOU WIN", (this.getWidth() - offset) / 2, this.getHeight()/2-10);
+			}else {
+				g.setColor(Color.RED);
+				g.setFont(new Font ("Monospace", Font.BOLD, 50));
+				int offset = g.getFontMetrics().stringWidth("GAME OVER");
+				g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2-10);
+			}
 			g.setColor(Color.BLACK);
 			if(Properties.darkMode)
 				g.setColor(Color.WHITE);
@@ -441,14 +451,17 @@ public class GamePanel extends JPanel{
 		nextT = new Tetrimino(gridWidth/2,0);
 		sb.setNext(nextT);
 
+		boolean gameOverFR = false;
 		for(int i=0;i<4;i++) {
 			if(!isOpen(currX(i),currY(i))) {
 				t.stop();
 				sb.saveHighScore();
 				playSound("gameOver.wav");
-				runGameOver();
+				gameOverFR = true;
 			}
 		}
+		if(gameOverFR)
+			runGameOver();
 	}
 
 	public void updateScore(int change) {
@@ -467,7 +480,17 @@ public class GamePanel extends JPanel{
 	}
 	
 	public void runGameOver(){
+		System.out.println("run");
 		gameOver = true;
+		if(isTwoPlayer) {
+			tf.twoPOver();
+		}
+	}
+	
+	public void runWin() {
+		t.stop();
+		gameOver = true;
+		won = true;
 	}
 
 	public int currX(int i) {
