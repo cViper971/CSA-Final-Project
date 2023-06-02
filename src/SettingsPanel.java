@@ -25,14 +25,14 @@ public class SettingsPanel extends JPanel {
 	Button backButton;
 	SettingsPanel thisPanel = this;
 	
-	private int startX = 10;
+	private int startX = 30;
 	private int startY = 150;
 	private int spacing = 50;
 	private int otherPlayerSpacing = 100;
 	private int maxWidth = 0;
 	
 	public SettingsPanel() {
-		setBackground(Color.WHITE);
+		setBackground(new Color(120, 196, 148));
 		setPreferredSize(new Dimension (Properties.gridWidth, Properties.gridLength));
 		
 		// Absolute Positioning: https://docs.oracle.com/javase/tutorial/uiswing/layout/none.html
@@ -54,8 +54,8 @@ public class SettingsPanel extends JPanel {
 		JCheckBox darkMode = new JCheckBox();
 		darkMode.setSelected(Properties.darkMode);
 		
-		addCheckBox(outlines, (x - width) / 2, startY - 15, width, 15, f);
-		addCheckBox(darkMode, (x - width) / 2, startY + spacing - 15, width, 15, f);
+		addCheckBox(outlines, (x - width) / 2, startY - 15, 20, 20, f);
+		addCheckBox(darkMode, (x - width) / 2, startY + spacing - 15, 20, 20, f);
 		
 		outlines.addChangeListener(new ChangeListener() {
 			@Override
@@ -75,14 +75,10 @@ public class SettingsPanel extends JPanel {
 		add(outlines);
 		add(darkMode);
 		
-		
-		
-		
-		
 		// Text Fields
-		int textWidth = 115;
+		int textWidth = 80;
 
-		int relIndex = 5;
+		int relIndex = 4;
 
 		for (int i = 0; i < 10; i++)
 		{
@@ -96,17 +92,12 @@ public class SettingsPanel extends JPanel {
 			} else {
 				if (i == 5)
 				{
-					relIndex = 5;
+					relIndex = 4;
 				}
-				addTextField(option, startX + 575, startY + spacing * relIndex - 23, textWidth, 30, f, i);
+				addTextField(option, startX + 525, startY + spacing * relIndex - 23, textWidth, 30, f, i);
 			}
-
-			//System.out.println(relIndex);
-
 			add(option);
 			relIndex += 1;
-
-
 		}
 		
 		setVisible(true);
@@ -119,12 +110,16 @@ public class SettingsPanel extends JPanel {
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		g.setColor(Color.BLACK);
-
-		Font fTitle = new Font("Monospace", Font.PLAIN, 32);
+		g.fillRect(12,97,676,606);
+		g.setColor(Color.WHITE);
+		g.fillRect(15,100,670,600);
+		
+		g.setColor(Color.BLACK);
+		Font fTitle = new Font("Monospace", Font.BOLD, 32);
 		g.setFont(fTitle);
 		int titleWidth = g.getFontMetrics().stringWidth("Settings");
 
-		g.drawString("Settings", (Properties.mainWindowWidth - titleWidth) / 2, 40);
+		g.drawString("Settings", (Properties.mainWindowWidth - titleWidth) / 2, 60);
 		
 		Font f = new Font("Monospace", Font.PLAIN, 20);
 		
@@ -138,22 +133,22 @@ public class SettingsPanel extends JPanel {
 		
 		maxWidth = g.getFontMetrics().stringWidth("Keybind Move Left");
 		int width = g.getFontMetrics().stringWidth("Keybind Move Left");
-		g.drawString("Player 1:", (startX + width) / 2, startY + spacing * 4);
-		g.drawString("Player 2:", Properties.mainWindowWidth - (startX + 2 * width) / 2 - otherPlayerSpacing, startY + spacing * 4);
+		g.drawString("Player 1:", (startX + width) / 2, startY + spacing * 3);
+		g.drawString("Player 2:", Properties.mainWindowWidth - (startX + 2 * width) / 2 - 50, startY + spacing * 3);
 		
-		g.drawString("Keybind Move Left", startX, startY + spacing * 5);
-		g.drawString("Keybind Move Right", startX, startY + spacing * 6);
-		g.drawString("Keybind Rotate", startX, startY + spacing * 7);
-		g.drawString("Keybind Soft Drop", startX, startY + spacing * 8);
-		g.drawString("Keybind Hard Drop", startX, startY + spacing * 9);
+		g.drawString("Keybind Move Left", startX, startY + spacing * 4);
+		g.drawString("Keybind Move Right", startX, startY + spacing * 5);
+		g.drawString("Keybind Rotate", startX, startY + spacing * 6);
+		g.drawString("Keybind Soft Drop", startX, startY + spacing * 7);
+		g.drawString("Keybind Hard Drop", startX, startY + spacing * 8);
 		
-		int player2Starting =  Properties.mainWindowWidth - (startX + 2 * width) / 2 - (width - g.getFontMetrics().stringWidth("Player 2")) / 2 - otherPlayerSpacing;
+		int player2Starting =  Properties.mainWindowWidth - (startX + 2 * width) / 2 - (width - g.getFontMetrics().stringWidth("Player 2")) / 2 - 110;
 		
-		g.drawString("Keybind Move Left", player2Starting, startY + spacing * 5);
-		g.drawString("Keybind Move Right", player2Starting, startY + spacing * 6);
-		g.drawString("Keybind Rotate", player2Starting, startY + spacing * 7);
-		g.drawString("Keybind Soft Drop", player2Starting, startY + spacing * 8);
-		g.drawString("Keybind Hard Drop", player2Starting, startY + spacing * 9);
+		g.drawString("Keybind Move Left", player2Starting, startY + spacing * 4);
+		g.drawString("Keybind Move Right", player2Starting, startY + spacing * 5);
+		g.drawString("Keybind Rotate", player2Starting, startY + spacing * 6);
+		g.drawString("Keybind Soft Drop", player2Starting, startY + spacing * 7);
+		g.drawString("Keybind Hard Drop", player2Starting, startY + spacing * 8);
 		
 		
 		backButton.draw(g);

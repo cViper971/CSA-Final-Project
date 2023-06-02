@@ -102,8 +102,8 @@ public class GamePanel extends JPanel{
 		nextT = new Tetrimino(gridWidth/2, 1);
 		sb.setNext(nextT);
 		
-		playYes = new Button((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 25));
-		playNo = new Button((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+50, 60, 25, 2, 5, new Color[] {Color.BLACK, Color.WHITE, Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 25));
+		playYes = new Button((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+60, 50, 20, 2, 5, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 22));
+		playNo = new Button((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+60, 50, 20, 2, 5, new Color[] {new Color(140, 49, 58), new Color(230, 83, 97), Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 22));
 	}
 
 	public void paintComponent(Graphics g) {
@@ -127,13 +127,15 @@ public class GamePanel extends JPanel{
 			g.setColor(Color.RED);
 			g.setFont(new Font ("Monospace", Font.BOLD, 50));
 			int offset = g.getFontMetrics().stringWidth("GAME OVER");
-			g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2);
+			g.drawString("GAME OVER", (this.getWidth() - offset) / 2, this.getHeight()/2-10);
 
-			g.setColor(Color.GREEN);
+			g.setColor(Color.BLACK);
+			if(Properties.darkMode)
+				g.setColor(Color.WHITE);
 			g.setFont(new Font ("Monospace", Font.BOLD, 25));
 
 			int offsetSmall = g.getFontMetrics().stringWidth("Play Again?");
-			g.drawString("Play Again?", (this.getWidth() - offsetSmall) / 2, this.getHeight()/2 + 20);
+			g.drawString("Play Again?", (this.getWidth() - offsetSmall) / 2, this.getHeight()/2 + 30);
 			playYes.draw(g);
 			playNo.draw(g);
 		}else {

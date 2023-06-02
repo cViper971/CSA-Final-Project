@@ -309,18 +309,20 @@ public class TetrisFrame extends JFrame {
         
         sideBar.setBackground(new Color(237, 239, 245));
         sideBar2.setBackground(new Color(237, 239, 245));
-        if(Properties.darkMode)
+        if(Properties.darkMode) {
         	sideBar.setBackground(new Color(13, 16, 20));
 			sideBar2.setBackground(new Color(13, 16, 20));
+        }
 
 		panel = new GamePanel(sideBar, false, true);
 		panel2 = new GamePanel(sideBar2, true, true);
 		
 		panel.setBackground(new Color(255,255,255));
 		panel2.setBackground(new Color(255,255,255));
-		if(Properties.darkMode)
+		if(Properties.darkMode) {
 			panel.setBackground(new Color(26, 32, 41));
 			panel2.setBackground(new Color(26, 32, 41));
+		}
 
 //		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
@@ -369,9 +371,6 @@ public class TetrisFrame extends JFrame {
 		}
 		@Override
 		public void keyPressed(KeyEvent e) {
-			
-			System.out.println("Typed");
-			
 			if(!panel1.gameOver)
 			{
 				// TODO Auto-generated method stub
