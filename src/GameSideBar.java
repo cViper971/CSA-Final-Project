@@ -68,7 +68,8 @@ public class GameSideBar extends JPanel{
 	    g.dispose();
 	    return resizedImage;
 	}
-
+	
+	// Draws the side bar.
 	public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);
@@ -106,7 +107,8 @@ public class GameSideBar extends JPanel{
 		
 		exit.draw(g);
 	}
-
+	
+	// This draws the upcoming piece on the game sidebar.
 	public void drawUpcomingPiece (Graphics g)
 	{
 		if (nextTetrimino != null)
@@ -155,6 +157,8 @@ public class GameSideBar extends JPanel{
 	public Button getExit() {
 		return exit;
 	}
+	
+	// Saves the score in the highScore
 	public void saveHighScore() {
 		sc.close();
 		

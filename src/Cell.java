@@ -40,6 +40,7 @@ public class Cell {
 		}
 	}
 	
+	// Resizes image to arbitrary width and height
 	public BufferedImage resize(BufferedImage image, int width, int height) {
 	    BufferedImage resizedImage = new BufferedImage(width, height,
 	    BufferedImage.TYPE_INT_ARGB);
@@ -48,7 +49,8 @@ public class Cell {
 	    g.dispose();
 	    return resizedImage;
 	}
-
+	
+	// Draws a rectangle and fills a transparent image on top of it for each Cell.
 	public void paintCell(Graphics g) {
 		
 		if(occupied) {

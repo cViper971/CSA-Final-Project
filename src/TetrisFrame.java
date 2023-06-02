@@ -78,6 +78,7 @@ public class TetrisFrame extends JFrame {
 		goatTetrisTheme.stop();
 	}
 	
+	// We assign a different number for each panel. We get the coordinates of the mouse relative to each panel and check to see if we clicked any buttons.
 	private class ClickListener implements MouseListener {
 
 		@Override
@@ -201,10 +202,6 @@ public class TetrisFrame extends JFrame {
 				int mX4 = MouseInfo.getPointerInfo().getLocation().x - sideBar2.getLocationOnScreen().x;
 				int mY4 = MouseInfo.getPointerInfo().getLocation().y - sideBar2.getLocationOnScreen().y;
 				
-				
-				
-				System.out.println("Mouse: " + mX1 + " " + mY1);
-				
 				if ((panel.playYes.isMouseInside(mX1, mY1) || panel2.playYes.isMouseInside(mX2, mY2))&&panel.gameOver)
 				{
 					getContentPane().removeAll();
@@ -263,6 +260,7 @@ public class TetrisFrame extends JFrame {
 		
 	}
 	
+	// Initalizes the single and two player mode. 
 	public void initalizeGame ()
 	{
 		
@@ -277,8 +275,6 @@ public class TetrisFrame extends JFrame {
 			sideBar.setBackground(new Color(13, 16, 20));
         
         panel = new GamePanel(sideBar, this, true, false);
-        
-        System.out.println(Properties.darkMode);
 		
 //		https://stackoverflow.com/questions/1082504/requesting-focus-in-window
 		SwingUtilities.invokeLater(new Runnable () {
@@ -309,6 +305,7 @@ public class TetrisFrame extends JFrame {
         sideBar.repaint();
         
 	}
+	
 	
 	public void initalizeTwoGame ()
 	{
@@ -382,7 +379,6 @@ public class TetrisFrame extends JFrame {
 	
 	public void twoPOver() {
 		if(panel.gameOver) {
-			System.out.println("this was run");
 			panel2.runWin();
 			return;
 		}
@@ -392,6 +388,9 @@ public class TetrisFrame extends JFrame {
 		}
 	}
 
+	/* Handles the keybinds for two player mode. 
+	 * This wouldn't have worked with seperate key listeners on each panel because the key listener must be in focus (only one component can be in focus at a time). 
+	*/
 	private class Keyboard implements KeyListener {
 
 		public GamePanel panel1;

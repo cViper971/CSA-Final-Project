@@ -24,7 +24,8 @@ public class Button {
 		this.msg = msg;
 		this.font = font;
 	}
-
+	
+	// Draws a button that has an outline, specific text, font, and colors.
 	public void draw (Graphics g)
 	{
 		g.setColor(colors[0]);

@@ -61,7 +61,12 @@ public class Tetrimino {
 		Because of the way we have organized our coordinate system (positive x and y instead of typical Cartesian positive x and negative y), 
 		we must invert all Cartesian transforms. 
 	*/
-
+	
+	/* 	
+		Iterates through all of the coordinates and transforms them using the rotation formula. 
+		We must have offsets since we are keeping track of the top left hand corner. 
+	*/
+	
 	public void rotateLeft () {
 
 		// All calculations are relative to the upper left hand corner (0, 0)
@@ -127,7 +132,8 @@ public class Tetrimino {
 			y+=1;
 		return y-init;
 	}
-
+	
+	// Checks to see if the block is on the ground or on a occupied piece
 	public boolean isLanded(Cell[][] board) {
 		for(int i = 0;i<4;i++) {
 			
@@ -167,7 +173,7 @@ public class Tetrimino {
 		}
 	}
 	
-
+	
 	public static int[][] deepClone (int[][] array)
 	{
 		int[][] copy = new int[array.length][array[0].length];

@@ -20,7 +20,8 @@ public class MainMenu extends JPanel {
 		singlePlay = new Button((Properties.mainWindowWidth - 250) / 2, y + 200, 250, 30, 5, 10, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "One Player", new Font("Monospace", Font.PLAIN, 40));
 		twoPlay = new Button((Properties.mainWindowWidth - 250) / 2, y + 300, 250, 30, 5, 10, new Color[] {new Color(140, 49, 58), new Color(230, 83, 97), Color.BLACK}, "Two Player", new Font("Monospace", Font.PLAIN, 40));
 	}
-
+	
+	// Draws Buttons and Main Menu Screen
 	public void paintComponent (Graphics g)
 	{
 		super.paintComponent(g);

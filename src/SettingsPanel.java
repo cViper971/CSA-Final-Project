@@ -79,7 +79,8 @@ public class SettingsPanel extends JPanel {
 		int textWidth = 80;
 
 		int relIndex = 4;
-
+		
+		// For each text field we attach a listener for all of them. Half of the textfields are shifted over for player 2.
 		for (int i = 0; i < 10; i++)
 		{
 			String keyName = KeyEvent.getKeyText(getKeyCodeFromVariable(i));

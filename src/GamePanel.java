@@ -57,6 +57,7 @@ public class GamePanel extends JPanel{
 
 	public GamePanel(GameSideBar sideBar, TetrisFrame tf, boolean isPlayer1, boolean isTwoPlayer){
 		
+		//grid will be half size
 		if (isTwoPlayer)
 		{
 			gridWidth /= 2;
@@ -80,7 +81,8 @@ public class GamePanel extends JPanel{
 			this.softKey = Properties.player2Soft;
 			this.hardKey = Properties.player2Hard;
 		}
-
+		
+		//filling the grid with cells that are empty
 		board = new Cell[Properties.gridLength][gridWidth];
 		for(int i=0;i<Properties.gridLength;i++) {
 			for(int j=0;j<gridWidth;j++) {
@@ -115,17 +117,18 @@ public class GamePanel extends JPanel{
 			addKeyListener(new keyboard());
 		}
 		
-		// Just a reminder that this will not necessarily work for some all board dimensions (such as 4 by 4) as some blocks are positioned with their coordinates starting way to the left. 
+		//set up first pieces
 		currT = new Tetrimino(gridWidth/2, 1);
 		nextT = new Tetrimino(gridWidth/2, 1);
 		sb.setNext(nextT);
 		
+		//create the objects for the play again buttons that will be used later
 		playYes = new Button((gridWidth*Properties.blockSize)/2-80, (Properties.gridLength*Properties.blockSize)/2+60, 50, 20, 2, 5, new Color[] {new Color(58, 130, 47), new Color(154, 205, 50), Color.BLACK}, "YES", new Font("Monospace", Font.PLAIN, 22));
 		playNo = new Button((gridWidth*Properties.blockSize)/2+40, (Properties.gridLength*Properties.blockSize)/2+60, 50, 20, 2, 5, new Color[] {new Color(140, 49, 58), new Color(230, 83, 97), Color.BLACK}, "NO", new Font("Monospace", Font.PLAIN, 22));
 	}
 	
 	
-	// https://componenthouse.com/2008/02/08/high-quality-image-resize-with-java/
+	// resizes the image
 	public BufferedImage resize(BufferedImage image, int width, int height) {
 	    BufferedImage resizedImage = new BufferedImage(width, height,
 	    BufferedImage.TYPE_INT_ARGB);
@@ -134,13 +137,17 @@ public class GamePanel extends JPanel{
 	    g.dispose();
 	    return resizedImage;
 	}
-
+	
+	
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
+		//draws current piece and its outline
 		currT.drawCurrent(g, Tile);
 		if(Properties.colorOutlines)
 			drawOutline(g);
+		
+		//paint all the cells, only occupied ones will be drawn
 		for(Cell[] cells:board)
 		{
 			for(Cell c:cells)
@@ -149,6 +156,7 @@ public class GamePanel extends JPanel{
 			}
 		}
 		
+		//end game/play again menu
 		if(gameOver) {
 			Graphics2D g2 = (Graphics2D) g;
 			g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -199,8 +207,9 @@ public class GamePanel extends JPanel{
 				if (canRotate(false))
 					currT.rotateRight();
 			if(e.getKeyCode()==softKey) 
-				movementTickDelay = 4;
+				movementTickDelay = 4; //decrease time between dips so soft drop
 	
+			//hard drop adds to grid
 			if(e.getKeyCode()==hardKey) {
 				updateScore(2*currT.drop(board));
 				updateGrid();
@@ -214,10 +223,11 @@ public class GamePanel extends JPanel{
 				return;
 			// TODO Auto-generated method stub
 			if(e.getKeyCode()==KeyEvent.VK_DOWN)
-				movementTickDelay = movementDelay;
+				movementTickDelay = movementDelay; //undo soft drop
 		}
 	}
-
+	
+	
 	public void checkLines() {
 
 		int lines = 0;
@@ -225,47 +235,49 @@ public class GamePanel extends JPanel{
 		
 		if (!breakAnimationStart) {
 			
-		Arrays.fill(animationBlocks, null);
+			Arrays.fill(animationBlocks, null);
 		
-		for(int i=0;i<board.length;i++) {
-			boolean isFull = true;
-			for(Cell cell:board[i]) {
-				if(cell.isOccupied()==false)
-				{
-					isFull=false;
-					break;
+			for(int i=0;i<board.length;i++) {
+				boolean isFull = true;
+				for(Cell cell:board[i]) {
+					if(cell.isOccupied()==false)
+					{
+						isFull=false;
+						break;
+					}
+					
 				}
-				
-			}
+				//if no cells are empty, it must be full so continue
+				if(isFull) {
+					lines += 1;
 	
-			if(isFull) {
-				lines += 1;
-
-				lowestIndex = i;
-				
-				if (board.length % 2 == 0)
-				{
-					animationBlocks[relIndex] = getCell(gridWidth / 2, i).copyCell();
-					animationBlocks[relIndex + 1] = getCell(gridWidth / 2 - 1, i).copyCell();
-				} else {
-					animationBlocks[relIndex] = getCell(gridWidth / 2, i).copyCell();
-					animationBlocks[relIndex + 1] = getCell(gridWidth / 2, i).copyCell();
+					lowestIndex = i;
+					
+					if (board.length % 2 == 0)
+					{
+						animationBlocks[relIndex] = getCell(gridWidth / 2, i).copyCell();
+						animationBlocks[relIndex + 1] = getCell(gridWidth / 2 - 1, i).copyCell();
+					} else {
+						animationBlocks[relIndex] = getCell(gridWidth / 2, i).copyCell();
+						animationBlocks[relIndex + 1] = getCell(gridWidth / 2, i).copyCell();
+					}
+					
+					
+					relIndex += 2;
 				}
-				
-				
-				relIndex += 2;
+			}
+		
+			//if there were any lines, play sound, update the scoring, animate
+			if (lines > 0)
+			{
+				playSound("lineClear.wav");
+				breakAnimationStart = true;
+				totalLines+=lines;
+				updateLevel();
 			}
 		}
-		if (lines > 0)
-		{
-			playSound("lineClear.wav");
-			breakAnimationStart = true;
-			totalLines+=lines;
-			updateLevel();
-		}
-	}
 
-		
+		//more lines gives much more score
 		switch(lines) {
 		case 1:
 			updateScore(100);
@@ -282,6 +294,7 @@ public class GamePanel extends JPanel{
 		repaint();
 	}
 	
+	// From the middle, the blocks turn white after some certain amount of ticks (animationTickDelay). After the animation is done, we move all the blocks down.
 	public void animateBlockBreak ()
 	{
 		if (breakAnimationStart)
@@ -322,6 +335,7 @@ public class GamePanel extends JPanel{
 		}
 	}
 	
+	// Moves all of the blocks down relative to the rows that were broken
 	public void moveBlocksDown (int maxY, Cell[] animationBlocks)
 	{
 		
@@ -355,6 +369,7 @@ public class GamePanel extends JPanel{
 		}
 	}
 	
+	// Moves an entire row
 	public void moveRow (int row)
 	{
 		for (int i = 0; i < gridWidth; i++)
@@ -366,6 +381,7 @@ public class GamePanel extends JPanel{
 		}
 	}
 	
+	// Checks to see if there are any blocks in the way that could prevent the row from moving. 
 	public boolean isRowMoveable (int row)
 	{
 		if (row >= Properties.gridLength - 1)
@@ -393,7 +409,7 @@ public class GamePanel extends JPanel{
 	}
 
 
-
+	//make sure it can move to location
 	public boolean canMove(int x, int y) {
 		for(int i=0;i<4;i++) {
 			if(!isOpen(x+(int)currT.shape[i][0],y+(int)currT.shape[i][1]))
@@ -401,7 +417,8 @@ public class GamePanel extends JPanel{
 		}
 		return true;
 	}
-
+	
+	//make sure it can rotate in the given direction by checking with a duplicate
 	public boolean canRotate(boolean left) {
 
 		Tetrimino copy = currT.copy();
@@ -433,7 +450,8 @@ public class GamePanel extends JPanel{
 		}
 		return true;
 	}
-
+	
+	
 	public boolean isOpen(int x,int y) {
 		if(x>gridWidth-1||x<0)
 			return false;
@@ -444,6 +462,8 @@ public class GamePanel extends JPanel{
 		return true;
 	}
 	
+	
+	//general sound function
 	public void playSound(String file) {
 		File music = new File("Sounds/"+file);
 		
@@ -458,6 +478,7 @@ public class GamePanel extends JPanel{
 		}
 	}
 
+	//outlines are drawn by dropping a duplicate and drawing a rectangle instead of drawing the other way
 	public void drawOutline(Graphics g) {
 		Graphics2D g2 = (Graphics2D)g;
 		Tetrimino copy = currT.copy();
@@ -468,6 +489,7 @@ public class GamePanel extends JPanel{
 		}
 	}
 
+	//save the piece into the grid
 	public void updateGrid() {
 		for(int i = 0;i<4;i++) {
 			setCell(currX(i),currY(i),currT.color,true);
@@ -498,18 +520,17 @@ public class GamePanel extends JPanel{
 		sb.setScore(score);
 	}
 	
+	//every 10 total lines, level goes up, changing score multiplier and also speed
 	public void updateLevel() {
 		level = totalLines/10+1;
 		if(level>10)
 			level=10;
 		movementDelay = (int)(60*Math.pow(0.7899771419, level)); //multiplier so last level has tick of 6
 		movementTickDelay = movementDelay;
-		System.out.println(movementDelay);
 		sb.setLevel(level);
 	}
 	
 	public void runGameOver(){
-		System.out.println("run");
 		gameOver = true;
 		if(isTwoPlayer) {
 			tf.twoPOver();
@@ -546,8 +567,10 @@ public class GamePanel extends JPanel{
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
 			
+			//if counter is above thresold
 			if (amountTicks >= movementTickDelay) 
 			{
+				//grounded is used to allow for tucking...ultimately only saves piece into grid the tick after it touches ground
 				if(grounded) {
 					if(currT.isLanded(board))
 					{
